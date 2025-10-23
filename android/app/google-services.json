@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627701643441",
+    "project_id": "proflight-app",
+    "storage_bucket": "proflight-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627701643441:android:3bf2457d8c4460dd2f0a90",
+        "android_client_info": {
+          "package_name": "com.example.proflight"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRySb59U6LBd1heJC-c-7igfzY-JPFuYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
