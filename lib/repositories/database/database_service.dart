@@ -44,11 +44,14 @@ class UserDatabaseService implements DatabaseService<User> {
 }
 
 class FlightDatabaseService implements DatabaseService<Flight> {
+  final String id;
   final FirebaseFirestore _firestore;
   late final CollectionReference<Flight> _sessionsRef;
-  final collectionPath = 'flights';
+  final String collectionPath;
 
-  FlightDatabaseService({FirebaseFirestore? firestore}) : _firestore = firestore ?? FirebaseFirestore.instance {
+  FlightDatabaseService({FirebaseFirestore? firestore, required this.id})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      collectionPath = "users/$id/flights" {
     _sessionsRef = _firestore
         .collection(collectionPath)
         .withConverter<Flight>(

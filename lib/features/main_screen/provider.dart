@@ -9,6 +9,10 @@ class MainScreenProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider.value(initialData: null, value: FlightDatabaseService().getElements(), child: MainScreen());
+    return StreamProvider.value(
+      initialData: null,
+      value: FlightDatabaseService(id: "test").getElements(),
+      child: MainScreen(),
+    );
   }
 }
