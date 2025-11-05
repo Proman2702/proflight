@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:proflight/repositories/database/models/flight.dart';
+import 'package:proflight/models/flight.dart';
 import 'package:provider/provider.dart';
 
 import '../../etc/colors.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proflight/features/main_screen/model.dart';
-import 'package:proflight/features/main_screen/screen.dart';
+import 'package:proflight/ui/main_screen/model.dart';
+import 'package:proflight/ui/main_screen/screen.dart';
 import 'package:proflight/repositories/database/database_service.dart';
 import 'package:provider/provider.dart';
 

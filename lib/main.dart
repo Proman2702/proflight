@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:proflight/features/main_screen/provider.dart';
+import 'package:proflight/ui/enter_screen/screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {'/': (context) => const MainScreenProvider()},
+      routes: {'/': (context) => const InitialScreen()},
       theme: ThemeData(textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme)),
     );
   }
