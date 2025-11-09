@@ -12,7 +12,7 @@ class AuthScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color.fromARGB(255, 13, 13, 54), Color.fromARGB(255, 76, 110, 196)],
+          colors: [Color.fromARGB(255, 13, 35, 54), Color.fromARGB(255, 76, 154, 196)],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
@@ -57,22 +57,111 @@ class AuthScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 120),
+                SizedBox(height: 100),
                 Container(
                   height: 40,
                   width: 300,
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     children: [
-                      Icon(Icons.account_circle_rounded, color: Colors.black54),
+                      Icon(Icons.account_circle_rounded, color: const Color.fromARGB(255, 195, 128, 145)),
                       SizedBox(width: 8),
                       ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 200),
-                        child: TextField(decoration: InputDecoration(border: InputBorder.none)),
+                        constraints: BoxConstraints(maxWidth: 250),
+                        child: TextField(
+                          style: TextStyle(fontSize: 20),
+
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            border: InputBorder.none,
+                            hint: Text('Почта', style: TextStyle(color: Colors.black26, fontSize: 20)),
+                          ),
+                        ),
                       ),
                     ],
                   ),
+                ),
+                SizedBox(height: 15),
+                Container(
+                  height: 40,
+                  width: 300,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                  child: Row(
+                    children: [
+                      Icon(Icons.lock, color: const Color.fromARGB(255, 195, 128, 145)),
+                      SizedBox(width: 8),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 250),
+                        child: TextField(
+                          style: TextStyle(fontSize: 20),
+
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            border: InputBorder.none,
+                            hint: Text('Пароль', style: TextStyle(color: Colors.black26, fontSize: 20)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 5),
+                Container(
+                  width: 300,
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    'Забыли пароль?',
+                    style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                  ),
+                ),
+                SizedBox(height: 100),
+                Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.transparent,
+
+                  child: InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(15),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 195, 128, 145),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Container(
+                        width: 190,
+                        height: 36,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Войти',
+                          style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5),
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Создать профиль',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      decorationColor: Colors.white,
+                    ),
+                  ),
+                ),
+                Container(width: 155, height: 0.5, color: Colors.white),
+                SizedBox(height: 55),
+                Text(
+                  'Created and designed by Proman2702',
+                  style: TextStyle(fontWeight: FontWeight.w800, color: Colors.black12),
                 ),
               ],
             ),
