@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/ui/auth_gate.dart';
+import 'package:proflight/ui/auth_screen/screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {'/': (context) => const AuthGate()},
+      routes: {'/': (context) => AuthScreen()},
       theme: ThemeData(textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme)),
     );
   }

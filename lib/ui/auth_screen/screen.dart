@@ -25,9 +25,11 @@ class AuthScreen extends StatelessWidget {
                 SizedBox(height: 150),
                 Row(
                   mainAxisSize: MainAxisSize.min,
-
                   children: [
-                    Image.asset("assets/images/nik.png", height: 80),
+                    Image.network(
+                      'https://www.dropbox.com/scl/fi/ewgdjpbhku51fgc0loe49/nik.png?rlkey=bdf7kv74xt1aq3ihv0t0eeq12&dl=1',
+                      height: 80,
+                    ),
                     SizedBox(width: 5),
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
@@ -120,7 +122,7 @@ class AuthScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 100),
                 Material(
-                  elevation: 5,
+                  elevation: 2,
                   borderRadius: BorderRadius.circular(15),
                   color: Colors.transparent,
 
