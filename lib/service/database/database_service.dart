@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:proflight/models/flight.dart';
-import 'package:proflight/models/user.dart';
+import 'package:proflight/entities/flight.dart';
+import 'package:proflight/entities/user.dart';
 
 abstract class DatabaseService<T> {
   Stream<QuerySnapshot<T>> getElements();

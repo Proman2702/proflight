@@ -1,6 +1,5 @@
 class Flight {
   double duration;
-
   Flight({required this.duration});
 
   factory Flight.fromJson(Map<String, Object?> json) {

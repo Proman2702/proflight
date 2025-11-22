@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:proflight/ui/test_screen/provider.dart';
-import 'package:proflight/ui/test_screen/screen.dart';
+import 'package:proflight/ui/auth_screen/view_model.dart';
 import 'package:provider/provider.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -9,6 +8,8 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<AuthScreenModel>();
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -147,15 +148,18 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 5),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Создать профиль',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      decorationColor: Colors.white,
+                GestureDetector(
+                  onTap: () => model.goToRegister(context),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Создать профиль',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        decorationColor: Colors.white,
+                      ),
                     ),
                   ),
                 ),
