@@ -12,6 +12,7 @@ import 'package:proflight/ui/main_screen/view_model.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
+// пококок
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
