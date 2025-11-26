@@ -17,9 +17,8 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(
               height: 50,
               width: 300,
-
               child: TextField(
-                decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Почта"),
+                decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Электронная почта"),
                 controller: TextEditingController(text: model.email),
                 onChanged: (value) => model.setEmail(value),
               ),
@@ -28,7 +27,6 @@ class RegisterScreen extends StatelessWidget {
             SizedBox(
               height: 50,
               width: 300,
-
               child: TextField(
                 decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Пароль"),
                 controller: TextEditingController(text: model.password),
@@ -36,7 +34,7 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 5),
-            ElevatedButton(onPressed: () => model.leaveWithRegister(context), child: Text("Зарегаться")),
+            ElevatedButton(onPressed: () => model.leaveWithRegister(context), child: Text("Зарегистрироваться")),
           ],
         ),
       ),

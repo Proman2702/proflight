@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 import 'package:proflight/ui/auth_gate.dart';
 import 'package:proflight/ui/auth_screen/register/screen.dart';
+import 'package:proflight/ui/auth_screen/register/view_model.dart';
 import 'package:proflight/ui/global_auth_view_model.dart';
 import 'package:proflight/ui/auth_screen/screen.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
@@ -34,7 +35,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {'/': (_) => const AuthGate(), '/register': (_) => const RegisterScreen()},
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (_) => const AuthGate());
+          case '/register':
+            return MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) => RegisterScreenModel(),
+                child: const RegisterScreen(),
+              ),
+            );
+          default:
+            return MaterialPageRoute(builder: (_) => const AuthGate());
+        }
+      },
       theme: ThemeData(textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme)),
     );
   }

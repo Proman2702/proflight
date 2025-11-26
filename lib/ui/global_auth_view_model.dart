@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 
@@ -22,7 +21,7 @@ class GlobalAuthViewModel extends ChangeNotifier {
       } else {
         _userState = AuthStatus.authenticated;
       }
+      notifyListeners();
     });
-    notifyListeners();
   }
 }

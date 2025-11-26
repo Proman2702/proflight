@@ -21,7 +21,7 @@ class RegisterScreenModel extends ChangeNotifier {
   }
 
   void _registerUser() async {
-    await _authService.signIn(_email, _password);
+    await _authService.signUp(_email, _password);
   }
 
   void leaveWithRegister(BuildContext context) {
