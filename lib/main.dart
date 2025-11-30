@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 import 'package:proflight/ui/auth_gate.dart';
+import 'package:proflight/ui/auth_gate_view_model.dart';
 import 'package:proflight/ui/auth_screen/register/screen.dart';
-import 'package:proflight/ui/global_auth_view_model.dart';
-import 'package:proflight/ui/auth_screen/screen.dart';
+import 'package:proflight/ui/auth_screen/register/view_model.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
-import 'package:proflight/ui/main_screen/screen.dart';
 import 'package:proflight/ui/main_screen/view_model.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -20,8 +19,14 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => GlobalAuthViewModel())],
-      child: MyApp(),
+      providers: [
+        Provider(create: (_) => AuthService()), // DI
+        ChangeNotifierProvider(create: (context) => AuthGateViewModel(context.read<AuthService>())),
+        ChangeNotifierProvider(create: (context) => AuthScreenModel(context.read<AuthService>())),
+        ChangeNotifierProvider(create: (context) => MainScreenModel(context.read<AuthService>())),
+        ChangeNotifierProvider(create: (context) => RegisterScreenModel(context.read<AuthService>())),
+      ],
+      child: const MyApp(),
     ),
   );
 }

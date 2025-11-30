@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 
 class MainScreenModel extends ChangeNotifier {
-  final AuthService authService = AuthService();
+  MainScreenModel(this._authService);
 
-  void signOut() async {
-    await authService.signOut();
+  final AuthService _authService;
+
+  Future<void> signOut() async {
+    await _authService.signOut();
     notifyListeners();
   }
 }

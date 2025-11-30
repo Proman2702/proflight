@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proflight/ui/async_helper.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,7 @@ class RegisterScreen extends StatelessWidget {
 
               child: TextField(
                 decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Почта"),
-                controller: TextEditingController(text: model.email),
+
                 onChanged: (value) => model.setEmail(value),
               ),
             ),
@@ -31,12 +32,26 @@ class RegisterScreen extends StatelessWidget {
 
               child: TextField(
                 decoration: InputDecoration(border: OutlineInputBorder(), labelText: "Пароль"),
-                controller: TextEditingController(text: model.password),
                 onChanged: (value) => model.setPassword(value),
               ),
             ),
             SizedBox(height: 5),
-            ElevatedButton(onPressed: () => model.leaveWithRegister(context), child: Text("Зарегаться")),
+            ElevatedButton(
+              onPressed: () async {
+                final success = await withLoadingDialog<bool>(context: context, action: model.registerUser);
+                if (!context.mounted) return;
+
+                if (success) {
+                  Navigator.pop(context);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                  );
+                }
+              },
+              child: const Text("Зарегаться"),
+            ),
           ],
         ),
       ),

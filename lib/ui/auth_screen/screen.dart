@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:proflight/ui/async_helper.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -75,6 +76,7 @@ class AuthScreen extends StatelessWidget {
                         constraints: BoxConstraints(maxWidth: 250),
                         child: TextField(
                           style: TextStyle(fontSize: 20),
+                          onChanged: (value) => model.setEmail(value),
 
                           decoration: InputDecoration(
                             isCollapsed: true,
@@ -101,6 +103,7 @@ class AuthScreen extends StatelessWidget {
                         constraints: BoxConstraints(maxWidth: 250),
                         child: TextField(
                           style: TextStyle(fontSize: 20),
+                          onChanged: (value) => model.setPassword(value),
 
                           decoration: InputDecoration(
                             isCollapsed: true,
@@ -128,7 +131,17 @@ class AuthScreen extends StatelessWidget {
                   color: Colors.transparent,
 
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      final success = await withLoadingDialog<bool>(context: context, action: model.signInUser);
+                      if (!context.mounted) return;
+
+                      if (!success) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                        );
+                      }
+                    },
                     borderRadius: BorderRadius.circular(15),
                     child: Ink(
                       decoration: BoxDecoration(
@@ -149,7 +162,7 @@ class AuthScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 GestureDetector(
-                  onTap: () => model.goToRegister(context),
+                  onTap: () => Navigator.pushNamed(context, "/register"),
                   child: Container(
                     alignment: Alignment.center,
                     child: Text(
