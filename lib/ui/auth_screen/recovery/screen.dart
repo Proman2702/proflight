@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
 import 'package:proflight/ui/async_helper.dart';
 import 'package:proflight/ui/auth_screen/additional/custom_text_field.dart';
-import 'package:proflight/ui/auth_screen/register/view_model.dart';
+import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -11,7 +11,7 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<RegisterScreenModel>();
+    final model = context.watch<RecoveryScreenModel>();
 
     return Container(
       decoration: BoxDecoration(
@@ -29,7 +29,8 @@ class RegisterScreen extends StatelessWidget {
                 SizedBox(height: 150),
 
                 Text(
-                  "Регистрация",
+                  maxLines: 2,
+                  "Восстановление пароля",
                   style: GoogleFonts.nunito(
                     textStyle: TextStyle(
                       color: CustomColors.main,
@@ -44,13 +45,6 @@ class RegisterScreen extends StatelessWidget {
                   leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
                   onChanged: (value) => model.setEmail(value),
                 ),
-                SizedBox(height: 15),
-                CustomTextField(
-                  onChanged: (value) => model.setPassword(value),
-                  leading: Icon(Icons.key, color: CustomColors.accent2),
-                  obscured: true,
-                ),
-
                 SizedBox(height: 100),
                 Material(
                   elevation: 2,
@@ -59,7 +53,7 @@ class RegisterScreen extends StatelessWidget {
 
                   child: InkWell(
                     onTap: () async {
-                      final success = await withLoadingDialog<bool>(context: context, action: model.registerUser);
+                      final success = await withLoadingDialog<bool>(context: context, action: model.sendVerification);
                       if (!context.mounted) return;
 
                       if (!success) {

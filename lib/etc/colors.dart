@@ -1,7 +1,13 @@
+import 'dart:ui';
+
 class CustomColors {
-  static const int mainDark = 0xFF121212;
-  static const int accent = 0xFF3255AC;
-  static const int sun = 0xFFFFBB00;
-  static const int main = 0xFFB9B9B9;
-  static const int background = 0xFF1C1C1E;
+  static const Color mainDark = Color(0xFF121212);
+  static const Color sun = Color(0xFFFFBB00);
+  static const Color main = Color(0xFFB9B9B9);
+
+  static const Color accent1 = Color(0xFF3255AC);
+  static const Color accent2 = Color(0xFFC38091);
+  static const Color fill = Color(0xFFFFFFFF);
+  static const Color background1 = Color(0xff0d2336);
+  static const Color background2 = Color(0xff4c9ac4);
 }

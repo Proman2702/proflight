@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 import 'package:proflight/ui/auth_gate.dart';
 import 'package:proflight/ui/auth_gate_view_model.dart';
+import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
 import 'package:proflight/ui/auth_screen/register/screen.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
@@ -25,6 +26,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AuthScreenModel(context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => MainScreenModel(context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => RegisterScreenModel(context.read<AuthService>())),
+        ChangeNotifierProvider(create: (context) => RecoveryScreenModel(context.read<AuthService>())),
       ],
       child: const MyApp(),
     ),

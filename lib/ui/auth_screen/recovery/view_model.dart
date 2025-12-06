@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 
-class RegisterScreenModel extends ChangeNotifier {
+class RecoveryScreenModel extends ChangeNotifier {
   String _email = "";
-  String _password = "";
   String? _errorMessage;
 
   final AuthService _authService;
 
-  RegisterScreenModel(this._authService);
+  RecoveryScreenModel(this._authService);
 
   String get email => _email;
-  String get password => _password;
   String? get errorMessage => _errorMessage;
 
   void setEmail(String value) {
@@ -19,22 +17,11 @@ class RegisterScreenModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPassword(String value) {
-    _password = value;
-    notifyListeners();
-  }
-
-  Future<bool> registerUser() async {
+  Future<bool> sendVerification() async {
     _errorMessage = null;
 
     try {
-      final user = await _authService.signUp(_email, _password);
-
-      if (user == null) {
-        _errorMessage = "Ошибка регистрации";
-        notifyListeners();
-        return false;
-      }
+      await _authService.sendPasswordReset(_email);
 
       return true; // успех
     } catch (e) {
