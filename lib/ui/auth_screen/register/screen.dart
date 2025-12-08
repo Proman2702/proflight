@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
+import 'package:proflight/ui/additional/custom_button.dart';
 import 'package:proflight/ui/async_helper.dart';
 import 'package:proflight/ui/additional/custom_text_field.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
@@ -11,7 +12,7 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<RegisterScreenModel>();
+    final RegisterScreenModel model = context.watch<RegisterScreenModel>();
 
     return Container(
       decoration: BoxDecoration(
@@ -40,10 +41,33 @@ class RegisterScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 50),
-                _StepHeader(currentStep: 1),
+                _StepHeader(currentStep: model.step),
 
-                SizedBox(height: 50),
-                _InputWindow(currentStep: 1),
+                SizedBox(height: 35),
+                _InputWindow(currentStep: model.step),
+                SizedBox(height: 35),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomButton(
+                      onTap: model.stepDecrement,
+                      text: "Вернуться",
+                      width: 140,
+                      height: 40,
+                      color: CustomColors.accent2,
+                      fontSize: 18,
+                    ),
+                    SizedBox(width: 15),
+                    CustomButton(
+                      onTap: model.allowRegister() ? () {} : model.stepIncrement,
+                      text: "Далее",
+                      width: 140,
+                      height: 40,
+                      color: CustomColors.accent2,
+                      fontSize: 18,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -61,11 +85,9 @@ class _InputWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
       height: 250,
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-      decoration: BoxDecoration(color: CustomColors.fill, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(20)),
       child: switch (currentStep) {
         0 => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,16 +96,31 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Почта',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: const ValueKey("email"),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setEmail(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
             SizedBox(height: 15),
             Text(
               'Пароль',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
-            SizedBox(height: 30),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setPassword(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
           ],
         ),
         1 => Column(
@@ -93,21 +130,45 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Фио',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setName(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
             SizedBox(height: 15),
             Text(
               'Авиакомпания',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setCompany(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
             SizedBox(height: 15),
             Text(
               'Судно',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setBoard(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
           ],
         ),
         2 => Column(
@@ -117,21 +178,45 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Часов всего',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setTotalHours(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
             SizedBox(height: 15),
             Text(
               'Часов еще че то',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setTotalHours1(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
             SizedBox(height: 15),
             Text(
               'Ну и еще',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.accent1, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
-            CustomTextField(onChanged: (value) {}, width: 250, shadow: true, borderRadius: 15),
+            CustomTextField(
+              key: UniqueKey(),
+              onChanged: (value) {
+                context.read<RegisterScreenModel>().setTotalHours2(value);
+              },
+              width: 300,
+              shadow: true,
+              borderRadius: 15,
+            ),
           ],
         ),
         _ => SizedBox(),

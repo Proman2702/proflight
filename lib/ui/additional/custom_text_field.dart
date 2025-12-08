@@ -39,7 +39,7 @@ class CustomTextField extends StatelessWidget {
           if (leading != null) ...[leading!, const SizedBox(width: 8)],
 
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: width - 60),
+            constraints: BoxConstraints(maxWidth: (leading != null) ? width - 60 : width - 30),
             child: TextField(
               style: TextStyle(fontSize: 20),
               onChanged: onChanged,
