@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
+import 'package:proflight/ui/additional/custom_button.dart';
 import 'package:proflight/ui/async_helper.dart';
-import 'package:proflight/ui/auth_screen/additional/custom_text_field.dart';
+import 'package:proflight/ui/additional/custom_text_field.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -66,11 +67,13 @@ class AuthScreen extends StatelessWidget {
                 SizedBox(height: 100),
                 CustomTextField(
                   leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
+                  text: 'Почта',
                   onChanged: (value) => model.setEmail(value),
                 ),
                 SizedBox(height: 15),
                 CustomTextField(
                   onChanged: (value) => model.setPassword(value),
+                  text: 'Пароль',
                   leading: Icon(Icons.key, color: CustomColors.accent2),
                   obscured: true,
                 ),
@@ -84,37 +87,23 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 100),
-                Material(
-                  elevation: 2,
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.transparent,
 
-                  child: InkWell(
-                    onTap: () async {
-                      final success = await withLoadingDialog<bool>(context: context, action: model.signInUser);
-                      if (!context.mounted) return;
+                CustomButton(
+                  onTap: () async {
+                    final success = await withLoadingDialog<bool>(context: context, action: model.signInUser);
+                    if (!context.mounted) return;
 
-                      if (!success) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
-                        );
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(15),
-                    child: Ink(
-                      decoration: BoxDecoration(color: CustomColors.accent2, borderRadius: BorderRadius.circular(15)),
-                      child: Container(
-                        width: 190,
-                        height: 36,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Войти',
-                          style: TextStyle(fontSize: 20, color: CustomColors.main, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                  ),
+                    if (!success) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                      );
+                    }
+                  },
+                  text: 'Войти',
+                  width: 190,
+                  height: 36,
+                  color: CustomColors.accent2,
                 ),
                 SizedBox(height: 5),
                 GestureDetector(

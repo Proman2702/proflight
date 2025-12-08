@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 import 'package:proflight/ui/auth_gate.dart';
 import 'package:proflight/ui/auth_gate_view_model.dart';
+import 'package:proflight/ui/auth_screen/recovery/screen.dart';
 import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
 import 'package:proflight/ui/auth_screen/register/screen.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
@@ -22,11 +23,8 @@ void main() async {
     MultiProvider(
       providers: [
         Provider(create: (_) => AuthService()), // DI
-        ChangeNotifierProvider(create: (context) => AuthGateViewModel(context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => AuthScreenModel(context.read<AuthService>())),
         ChangeNotifierProvider(create: (context) => MainScreenModel(context.read<AuthService>())),
-        ChangeNotifierProvider(create: (context) => RegisterScreenModel(context.read<AuthService>())),
-        ChangeNotifierProvider(create: (context) => RecoveryScreenModel(context.read<AuthService>())),
       ],
       child: const MyApp(),
     ),
@@ -41,7 +39,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: {'/': (_) => const AuthGate(), '/register': (_) => const RegisterScreen()},
+      routes: {
+        '/': (_) => ChangeNotifierProvider(
+          create: (context) => AuthGateViewModel(context.read<AuthService>()),
+          child: const AuthGate(),
+        ),
+        '/register': (_) => ChangeNotifierProvider(
+          create: (context) => RegisterScreenModel(context.read<AuthService>()),
+          child: const RegisterScreen(),
+        ),
+        '/recovery': (context) => ChangeNotifierProvider(
+          create: (context) => RecoveryScreenModel(context.read<AuthService>()),
+          child: const RecoveryScreen(),
+        ),
+      },
       theme: ThemeData(textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme)),
     );
   }

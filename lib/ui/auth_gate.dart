@@ -10,6 +10,11 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = context.watch<AuthGateViewModel>();
+    final size = MediaQuery.of(context).size;
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+
+    debugPrint('size: ${size.width} x ${size.height}');
+    debugPrint('devicePixelRatio: $dpr');
 
     if (status.userState == AuthStatus.authenticated) {
       return const MainScreen();
@@ -17,8 +22,6 @@ class AuthGate extends StatelessWidget {
       return const AuthScreen();
     }
 
-    return const Center(
-      child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()),
-    );
+    return const Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
   }
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
 import 'package:proflight/ui/async_helper.dart';
-import 'package:proflight/ui/auth_screen/additional/custom_text_field.dart';
+import 'package:proflight/ui/additional/custom_text_field.dart';
 import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
 import 'package:provider/provider.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class RecoveryScreen extends StatelessWidget {
+  const RecoveryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
