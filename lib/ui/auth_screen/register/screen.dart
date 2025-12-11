@@ -84,6 +84,8 @@ class _InputWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<RegisterScreenModel>();
+
     return Container(
       height: 250,
       alignment: Alignment.center,
@@ -99,10 +101,9 @@ class _InputWindow extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
             ),
             CustomTextField(
+              controller: model.emailController,
               key: const ValueKey("email"),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setEmail(value);
-              },
+
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -114,9 +115,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setPassword(value);
-              },
+              controller: model.passwordController,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -134,9 +133,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setName(value);
-              },
+              controller: model.nameController,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -148,9 +145,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setCompany(value);
-              },
+              controller: model.companyController,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -162,9 +157,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setBoard(value);
-              },
+              controller: model.boardController,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -182,9 +175,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setTotalHours(value);
-              },
+              controller: model.totalHoursController,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -196,9 +187,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setTotalHours1(value);
-              },
+              controller: model.totalHours1Controller,
               width: 300,
               shadow: true,
               borderRadius: 15,
@@ -210,9 +199,7 @@ class _InputWindow extends StatelessWidget {
             ),
             CustomTextField(
               key: UniqueKey(),
-              onChanged: (value) {
-                context.read<RegisterScreenModel>().setTotalHours2(value);
-              },
+              controller: model.totalHours2Controller,
               width: 300,
               shadow: true,
               borderRadius: 15,

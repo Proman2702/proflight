@@ -4,7 +4,8 @@ import 'package:proflight/etc/colors.dart';
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
-    required this.onChanged,
+    this.onChanged,
+    this.controller,
     this.leading,
     this.text = '',
     this.obscured = false,
@@ -13,12 +14,13 @@ class CustomTextField extends StatelessWidget {
     this.shadow = false,
   });
 
-  final Function(String)? onChanged;
   final Icon? leading;
   final String text;
   final double width;
   final double borderRadius;
   final bool shadow;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
   final bool obscured;
 
@@ -41,6 +43,7 @@ class CustomTextField extends StatelessWidget {
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: (leading != null) ? width - 60 : width - 30),
             child: TextField(
+              controller: controller,
               style: TextStyle(fontSize: 20),
               onChanged: onChanged,
               obscureText: obscured,

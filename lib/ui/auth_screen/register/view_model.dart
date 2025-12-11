@@ -1,15 +1,47 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:proflight/service/auth/auth_service.dart';
 
+// class _RegisterScreenModelState {
+//   final int step;
+//   final String? errorMessage;
+//   final bool isLoading;
+
+//     _RegisterScreenModelState({
+//       required this.step,
+//       required this.errorMessage,
+//       required this.isLoading
+//     });
+
+//     const _RegisterScreenModelState.initial()
+//     : step = 0,
+//       errorMessage = null,
+//       isLoading = false;
+
+//   _RegisterScreenModelState copyWith({
+//     int? step,
+//     String? errorMessage,
+//     bool? isLoading
+//   }) {
+//     return _RegisterScreenModelState(
+//       step: step ?? this.step,
+//       errorMessage: errorMessage,
+//       isLoading: isLoading ?? this.isLoading,
+//     );
+//   }
+
+// }
+
 class RegisterScreenModel extends ChangeNotifier {
-  String _email = "";
-  String _password = "";
-  String _name = "";
-  String _board = "";
-  String _company = "";
-  double _totalHours = 0;
-  double _totalHours1 = 0;
-  double _totalHours2 = 0;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final boardController = TextEditingController();
+  final companyController = TextEditingController();
+  final totalHoursController = TextEditingController();
+  final totalHours1Controller = TextEditingController();
+  final totalHours2Controller = TextEditingController();
 
   String? _errorMessage;
 
@@ -21,15 +53,6 @@ class RegisterScreenModel extends ChangeNotifier {
 
   int get step => _step;
   String? get errorMessage => _errorMessage;
-
-  void setEmail(String value) => _email = value;
-  void setPassword(String value) => _password = value;
-  void setName(String value) => _name = value;
-  void setCompany(String value) => _company = value;
-  void setBoard(String value) => _board = value;
-  void setTotalHours(String value) => _totalHours = double.parse(value);
-  void setTotalHours1(String value) => _totalHours1 = double.parse(value);
-  void setTotalHours2(String value) => _totalHours2 = double.parse(value);
 
   void stepIncrement() {
     if (_step < 2) _step++;
@@ -52,7 +75,7 @@ class RegisterScreenModel extends ChangeNotifier {
     _errorMessage = null;
 
     try {
-      final user = await _authService.signUp(_email, _password);
+      final user = await _authService.signUp(emailController.text, passwordController.text);
 
       if (user == null) {
         _errorMessage = "Ошибка регистрации";
@@ -66,5 +89,19 @@ class RegisterScreenModel extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+
+    passwordController.dispose();
+    nameController.dispose();
+    boardController.dispose();
+    companyController.dispose();
+    totalHoursController.dispose();
+    totalHours1Controller.dispose();
+    totalHours2Controller.dispose();
+    super.dispose();
   }
 }
