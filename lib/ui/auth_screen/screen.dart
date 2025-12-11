@@ -68,11 +68,11 @@ class AuthScreen extends StatelessWidget {
                 CustomTextField(
                   leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
                   text: 'Почта',
-                  onChanged: (value) => model.setEmail(value),
+                  controller: model.emailController,
                 ),
                 SizedBox(height: 15),
                 CustomTextField(
-                  onChanged: (value) => model.setPassword(value),
+                  controller: model.passwordController,
                   text: 'Пароль',
                   leading: Icon(Icons.key, color: CustomColors.accent2),
                   obscured: true,
@@ -81,9 +81,12 @@ class AuthScreen extends StatelessWidget {
                 Container(
                   width: 300,
                   alignment: Alignment.topRight,
-                  child: Text(
-                    'Забыли пароль?',
-                    style: TextStyle(fontWeight: FontWeight.w600, color: CustomColors.main),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, "/recovery"),
+                    child: Text(
+                      'Забыли пароль?',
+                      style: TextStyle(fontWeight: FontWeight.w600, color: CustomColors.main),
+                    ),
                   ),
                 ),
                 SizedBox(height: 100),

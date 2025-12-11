@@ -43,7 +43,7 @@ class RecoveryScreen extends StatelessWidget {
                 SizedBox(height: 100),
                 CustomTextField(
                   leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
-                  onChanged: (value) => model.setEmail(value),
+                  controller: model.emailController,
                 ),
                 SizedBox(height: 100),
                 Material(
@@ -61,6 +61,8 @@ class RecoveryScreen extends StatelessWidget {
                           context: context,
                           builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
                         );
+                      } else {
+                        Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
                       }
                     },
                     borderRadius: BorderRadius.circular(15),

@@ -59,7 +59,25 @@ class RegisterScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 15),
                     CustomButton(
-                      onTap: model.allowRegister() ? () {} : model.stepIncrement,
+                      onTap: model.allowRegister()
+                          ? () async {
+                              final success = await withLoadingDialog<bool>(
+                                context: context,
+                                action: model.registerUser,
+                              );
+                              if (!context.mounted) return;
+
+                              if (!success) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                                );
+                              } else {
+                                Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
+                              }
+                            }
+                          : model.stepIncrement,
                       text: "Далее",
                       width: 140,
                       height: 40,
