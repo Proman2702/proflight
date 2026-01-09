@@ -9,7 +9,6 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<MainScreenModel>();
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       extendBody: false,
       body: Center(
