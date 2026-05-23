@@ -1,39 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:proflight/service/auth/auth_service.dart';
-
-// class _RegisterScreenModelState {
-//   final int step;
-//   final String? errorMessage;
-//   final bool isLoading;
-
-//     _RegisterScreenModelState({
-//       required this.step,
-//       required this.errorMessage,
-//       required this.isLoading
-//     });
-
-//     const _RegisterScreenModelState.initial()
-//     : step = 0,
-//       errorMessage = null,
-//       isLoading = false;
-
-//   _RegisterScreenModelState copyWith({
-//     int? step,
-//     String? errorMessage,
-//     bool? isLoading
-//   }) {
-//     return _RegisterScreenModelState(
-//       step: step ?? this.step,
-//       errorMessage: errorMessage,
-//       isLoading: isLoading ?? this.isLoading,
-//     );
-//   }
-
-// }
+import 'package:proflight/core/error/result.dart';
+import 'package:proflight/models/auth_user.dart';
+import 'package:proflight/repositories/auth/auth_repository.dart';
 
 class RegisterScreenModel extends ChangeNotifier {
+  RegisterScreenModel(this._authService);
+
+  final AuthRepository _authService;
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
@@ -44,12 +18,7 @@ class RegisterScreenModel extends ChangeNotifier {
   final totalHours2Controller = TextEditingController();
 
   String? _errorMessage;
-
   int _step = 0;
-
-  final AuthService _authService;
-
-  RegisterScreenModel(this._authService);
 
   int get step => _step;
   String? get errorMessage => _errorMessage;
@@ -74,27 +43,26 @@ class RegisterScreenModel extends ChangeNotifier {
   Future<bool> registerUser() async {
     _errorMessage = null;
 
-    try {
-      final user = await _authService.signUp(emailController.text, passwordController.text);
+    final result = await _authService.signUp(
+      email: emailController.text,
+      password: passwordController.text,
+      profileName: boardController.text,
+      fio: nameController.text,
+      company: companyController.text,
+    );
 
-      if (user == null) {
-        _errorMessage = "Ошибка регистрации";
-        notifyListeners();
-        return false;
-      }
-
-      return true; // успех
-    } catch (e) {
-      _errorMessage = e.toString(); // тут можно мапить в красивый текст
+    if (result is Err<AuthUser>) {
+      _errorMessage = result.error.message ?? result.error.messageKey;
       notifyListeners();
       return false;
     }
+
+    return true;
   }
 
   @override
   void dispose() {
     emailController.dispose();
-
     passwordController.dispose();
     nameController.dispose();
     boardController.dispose();

@@ -1,32 +1,30 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:proflight/service/auth/auth_service.dart';
+import 'package:proflight/models/auth_user.dart';
+import 'package:proflight/repositories/auth/auth_repository.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
 class AuthGateViewModel extends ChangeNotifier {
   AuthGateViewModel(this._authService) {
-    final currentUser = _authService.getUser;
-    if (currentUser != null) {
-      _userState = AuthStatus.authenticated;
-    } else {
-      _userState = AuthStatus.unauthenticated;
-    }
-    notifyListeners();
+    _userState = _authService.currentUser == null
+        ? AuthStatus.unauthenticated
+        : AuthStatus.authenticated;
     _subscription = _authService.authStateChanges().listen(_onUserChanged);
   }
 
-  final AuthService _authService;
-  StreamSubscription<User?>? _subscription;
+  final AuthRepository _authService;
+  StreamSubscription<AuthUser?>? _subscription;
 
   AuthStatus _userState = AuthStatus.unknown;
 
   AuthStatus get userState => _userState;
 
-  void _onUserChanged(User? user) {
-    _userState = user == null ? AuthStatus.unauthenticated : AuthStatus.authenticated;
+  void _onUserChanged(AuthUser? user) {
+    _userState = user == null
+        ? AuthStatus.unauthenticated
+        : AuthStatus.authenticated;
     notifyListeners();
   }
 

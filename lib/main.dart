@@ -1,59 +1,54 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:proflight/service/auth/auth_service.dart';
-import 'package:proflight/ui/auth_gate.dart';
-import 'package:proflight/ui/auth_gate_view_model.dart';
-import 'package:proflight/ui/auth_screen/recovery/screen.dart';
-import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
-import 'package:proflight/ui/auth_screen/register/screen.dart';
-import 'package:proflight/ui/auth_screen/register/view_model.dart';
-import 'package:proflight/ui/auth_screen/view_model.dart';
-import 'package:proflight/ui/main_screen/view_model.dart';
+import 'package:proflight/di/di_container.dart';
+import 'package:proflight/navigation/routes.dart';
+import 'package:proflight/repositories/auth/auth_repository.dart';
+import 'package:proflight/repositories/database/app_database_repository.dart';
 import 'package:provider/provider.dart';
+
 import 'firebase_options.dart';
 
-// пококок
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final container = await DiContainer.create();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider(create: (_) => AuthService()), // DI
-        ChangeNotifierProvider(create: (context) => AuthScreenModel(context.read<AuthService>())),
-        ChangeNotifierProvider(create: (context) => MainScreenModel(context.read<AuthService>())),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(App(container: container));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({required this.container, super.key});
+
+  final DiContainer container;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (_) => ChangeNotifierProvider(
-          create: (context) => AuthGateViewModel(context.read<AuthService>()),
-          child: const AuthGate(),
+    return MultiProvider(
+      providers: [
+        Provider<DiContainer>(
+          create: (_) => container,
+          dispose: (_, container) => container.dispose(),
         ),
-        '/register': (_) => ChangeNotifierProvider(
-          create: (context) => RegisterScreenModel(context.read<AuthService>()),
-          child: const RegisterScreen(),
+        Provider<AuthRepository>.value(value: container.authRepository),
+        Provider<AppDatabaseRepository>.value(
+          value: container.databaseRepository,
         ),
-        '/recovery': (context) => ChangeNotifierProvider(
-          create: (context) => RecoveryScreenModel(context.read<AuthService>()),
-          child: const RecoveryScreen(),
+        Provider<AppRouter>(
+          create: (context) => AppRouter(context.read<AuthRepository>()),
+          dispose: (_, router) => router.dispose(),
         ),
-      },
-      theme: ThemeData(textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme)),
+      ],
+      child: Builder(
+        builder: (context) => MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: context.read<AppRouter>().router,
+          theme: ThemeData(
+            textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme),
+          ),
+        ),
+      ),
     );
   }
 }

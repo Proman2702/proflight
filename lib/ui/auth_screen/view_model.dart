@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:proflight/service/auth/auth_service.dart';
+import 'package:proflight/core/error/result.dart';
+import 'package:proflight/models/auth_user.dart';
+import 'package:proflight/repositories/auth/auth_repository.dart';
 
 class AuthScreenModel extends ChangeNotifier {
-  final AuthService _authService;
+  AuthScreenModel(this._authService);
+
+  final AuthRepository _authService;
 
   bool _inProcess = false;
   String? _errorMessage;
@@ -13,26 +17,25 @@ class AuthScreenModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get inProcess => _inProcess;
 
-  AuthScreenModel(this._authService);
-
   Future<bool> signInUser() async {
     _errorMessage = null;
+    _inProcess = true;
+    notifyListeners();
 
-    try {
-      final user = await _authService.signIn(emailController.text, passwordController.text);
+    final result = await _authService.signIn(
+      email: emailController.text,
+      password: passwordController.text,
+    );
 
-      if (user == null) {
-        _errorMessage = "Ошибка авторизации";
-        notifyListeners();
-        return false;
-      }
-
-      return true; // успех
-    } catch (e) {
-      _errorMessage = e.toString(); // тут можно мапить в красивый текст
+    _inProcess = false;
+    if (result is Err<AuthUser>) {
+      _errorMessage = result.error.message ?? result.error.messageKey;
       notifyListeners();
       return false;
     }
+
+    notifyListeners();
+    return true;
   }
 
   @override

@@ -29,14 +29,21 @@ class CustomButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(15),
         child: Ink(
-          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(15)),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(15),
+          ),
           child: Container(
             width: width,
             height: height,
             alignment: Alignment.center,
             child: Text(
               text,
-              style: TextStyle(fontSize: fontSize, color: textColor, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: fontSize,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),
@@ -70,8 +77,16 @@ class CustomButtonModified extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(15),
         child: Ink(
-          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(15)),
-          child: Container(width: width, height: height, alignment: Alignment.center, child: child),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Container(
+            width: width,
+            height: height,
+            alignment: Alignment.center,
+            child: child,
+          ),
         ),
       ),
     );

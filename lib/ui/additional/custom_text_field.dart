@@ -34,14 +34,24 @@ class CustomTextField extends StatelessWidget {
       decoration: BoxDecoration(
         color: CustomColors.main,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: shadow ? [BoxShadow(offset: Offset(0, 3), color: Colors.black26, blurRadius: 3)] : [],
+        boxShadow: shadow
+            ? [
+                BoxShadow(
+                  offset: Offset(0, 3),
+                  color: Colors.black26,
+                  blurRadius: 3,
+                ),
+              ]
+            : [],
       ),
       child: Row(
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 8)],
 
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: (leading != null) ? width - 60 : width - 30),
+            constraints: BoxConstraints(
+              maxWidth: (leading != null) ? width - 60 : width - 30,
+            ),
             child: TextField(
               controller: controller,
               style: TextStyle(fontSize: 20),
@@ -52,7 +62,10 @@ class CustomTextField extends StatelessWidget {
                 isCollapsed: true,
                 border: InputBorder.none,
 
-                hint: Text(text, style: TextStyle(color: Colors.black26, fontSize: 20)),
+                hint: Text(
+                  text,
+                  style: TextStyle(color: Colors.black26, fontSize: 20),
+                ),
               ),
             ),
           ),

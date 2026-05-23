@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
+import 'package:proflight/ui/additional/custom_button.dart';
 import 'package:proflight/ui/async_helper.dart';
 import 'package:proflight/ui/additional/custom_text_field.dart';
 import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
@@ -31,54 +33,54 @@ class RecoveryScreen extends StatelessWidget {
                 Text(
                   maxLines: 2,
                   "Восстановление пароля",
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.nunito(
                     textStyle: TextStyle(
                       color: CustomColors.main,
                       fontWeight: FontWeight.w900,
-                      fontSize: 52,
+                      fontSize: 38,
                       letterSpacing: 2,
                     ),
                   ),
                 ),
                 SizedBox(height: 100),
-                CustomTextField(
-                  leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
-                  controller: model.emailController,
-                ),
-                SizedBox(height: 100),
-                Material(
-                  elevation: 2,
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.transparent,
+                SizedBox(
+                  width: 300,
 
-                  child: InkWell(
-                    onTap: () async {
-                      final success = await withLoadingDialog<bool>(context: context, action: model.sendVerification);
-                      if (!context.mounted) return;
-
-                      if (!success) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
-                        );
-                      } else {
-                        Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(15),
-                    child: Ink(
-                      decoration: BoxDecoration(color: CustomColors.accent2, borderRadius: BorderRadius.circular(15)),
-                      child: Container(
-                        width: 250,
-                        height: 36,
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Зарегистрироваться',
-                          style: TextStyle(fontSize: 20, color: CustomColors.main, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ),
+                  child: Text(
+                    "Введите почту уже зарегистрированного аккаунта, который хотите восстановить",
+                    style: TextStyle(color: CustomColors.main),
                   ),
+                ),
+                SizedBox(height: 20),
+                CustomTextField(controller: model.emailController),
+                SizedBox(height: 200),
+
+                CustomButton(
+                  onTap: () async {
+                    final success = await withLoadingDialog<bool>(
+                      context: context,
+                      action: model.sendVerification,
+                    );
+                    if (!context.mounted) return;
+
+                    if (!success) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            model.errorMessage ?? 'Неизвестная ошибка',
+                          ),
+                        ),
+                      );
+                    } else {
+                      context.go('/auth');
+                    }
+                  },
+                  text: "Восстановить",
+                  width: 200,
+                  height: 36,
+                  color: CustomColors.accent2,
                 ),
               ],
             ),

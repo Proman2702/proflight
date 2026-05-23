@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
 import 'package:proflight/ui/additional/custom_button.dart';
@@ -66,7 +67,10 @@ class AuthScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 100),
                 CustomTextField(
-                  leading: Icon(Icons.account_circle_rounded, color: CustomColors.accent2),
+                  leading: Icon(
+                    Icons.account_circle_rounded,
+                    color: CustomColors.accent2,
+                  ),
                   text: 'Почта',
                   controller: model.emailController,
                 ),
@@ -82,10 +86,13 @@ class AuthScreen extends StatelessWidget {
                   width: 300,
                   alignment: Alignment.topRight,
                   child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, "/recovery"),
+                    onTap: () => context.push('/auth/recovery'),
                     child: Text(
                       'Забыли пароль?',
-                      style: TextStyle(fontWeight: FontWeight.w600, color: CustomColors.main),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: CustomColors.main,
+                      ),
                     ),
                   ),
                 ),
@@ -93,13 +100,20 @@ class AuthScreen extends StatelessWidget {
 
                 CustomButton(
                   onTap: () async {
-                    final success = await withLoadingDialog<bool>(context: context, action: model.signInUser);
+                    final success = await withLoadingDialog<bool>(
+                      context: context,
+                      action: model.signInUser,
+                    );
                     if (!context.mounted) return;
 
                     if (!success) {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            model.errorMessage ?? 'Неизвестная ошибка',
+                          ),
+                        ),
                       );
                     }
                   },
@@ -110,7 +124,7 @@ class AuthScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, "/register"),
+                  onTap: () => context.push('/auth/register'),
                   child: Container(
                     alignment: Alignment.center,
                     child: Text(
@@ -128,7 +142,10 @@ class AuthScreen extends StatelessWidget {
                 SizedBox(height: 55),
                 Text(
                   'Created and designed by Proman2702',
-                  style: TextStyle(fontWeight: FontWeight.w800, color: Colors.black12),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black12,
+                  ),
                 ),
               ],
             ),

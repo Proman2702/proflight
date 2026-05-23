@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
 import 'package:proflight/ui/additional/custom_button.dart';
@@ -70,11 +71,15 @@ class RegisterScreen extends StatelessWidget {
                               if (!success) {
                                 showDialog(
                                   context: context,
-                                  builder: (context) =>
-                                      AlertDialog(title: Text(model.errorMessage ?? 'Неизвестная ошибка')),
+                                  builder: (context) => AlertDialog(
+                                    title: Text(
+                                      model.errorMessage ??
+                                          'Неизвестная ошибка',
+                                    ),
+                                  ),
                                 );
                               } else {
-                                Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
+                                context.go('/main');
                               }
                             }
                           : model.stepIncrement,
@@ -107,7 +112,10 @@ class _InputWindow extends StatelessWidget {
     return Container(
       height: 250,
       alignment: Alignment.center,
-      decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: switch (currentStep) {
         0 => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +124,11 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Почта',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               controller: model.emailController,
@@ -129,7 +141,11 @@ class _InputWindow extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'Пароль',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -147,7 +163,11 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Фио',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -159,7 +179,11 @@ class _InputWindow extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'Авиакомпания',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -171,7 +195,11 @@ class _InputWindow extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'Судно',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -189,7 +217,11 @@ class _InputWindow extends StatelessWidget {
           children: [
             Text(
               'Часов всего',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -201,7 +233,11 @@ class _InputWindow extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'Часов еще че то',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -213,7 +249,11 @@ class _InputWindow extends StatelessWidget {
             SizedBox(height: 15),
             Text(
               'Ну и еще',
-              style: TextStyle(fontWeight: FontWeight.bold, color: CustomColors.main, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: CustomColors.main,
+                fontSize: 16,
+              ),
             ),
             CustomTextField(
               key: UniqueKey(),
@@ -314,12 +354,18 @@ class _StepCircle extends StatelessWidget {
           height: 45,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isActive || isDone ? CustomColors.accent2 : CustomColors.inActive,
+            color: isActive || isDone
+                ? CustomColors.accent2
+                : CustomColors.inActive,
             shape: BoxShape.circle,
           ),
           child: Text(
             '${index + 1}',
-            style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -334,6 +380,10 @@ class _StepLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: 50, height: 4, color: isActive ? CustomColors.accent2 : CustomColors.inActive);
+    return Container(
+      width: 50,
+      height: 4,
+      color: isActive ? CustomColors.accent2 : CustomColors.inActive,
+    );
   }
 }
