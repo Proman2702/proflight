@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proflight/core/error/error_presentation.dart';
 import 'package:proflight/core/error/result.dart';
 import 'package:proflight/models/auth_user.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
@@ -29,7 +30,7 @@ class AuthScreenModel extends ChangeNotifier {
 
     _inProcess = false;
     if (result is Err<AuthUser>) {
-      _errorMessage = result.error.message ?? result.error.messageKey;
+      _errorMessage = result.error.userMessage;
       notifyListeners();
       return false;
     }

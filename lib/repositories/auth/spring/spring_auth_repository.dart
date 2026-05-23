@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:proflight/core/error/failures.dart';
 import 'package:proflight/core/error/result.dart';
 import 'package:proflight/models/auth_session.dart';
 import 'package:proflight/models/auth_user.dart';
@@ -43,12 +44,19 @@ class SpringAuthRepository implements AuthRepository {
         options: Options(extra: {'skipAuth': true}),
       );
       final data = response.data;
-      if (data == null) throw StateError('Empty login response');
+      if (data == null) {
+        return Err(
+          NetworkFailure(
+            NetworkFailureType.unknown,
+            message: 'Empty login response',
+          ),
+        );
+      }
 
       await _tokenStorage.saveSession(
         AuthSession.fromJson(data, email: normalizedEmail),
       );
-      return AuthUser(id: normalizedEmail, email: normalizedEmail);
+      return Ok(AuthUser(id: normalizedEmail, email: normalizedEmail));
     });
   }
 
@@ -68,13 +76,8 @@ class SpringAuthRepository implements AuthRepository {
       );
       final resolvedFio = fio?.trim();
       if (resolvedFio == null || resolvedFio.isEmpty) {
-        throw DioException(
-          requestOptions: RequestOptions(path: '/api/auth/register'),
-          response: Response(
-            requestOptions: RequestOptions(path: '/api/auth/register'),
-            statusCode: 400,
-            data: {'message': 'fio is required'},
-          ),
+        return Err(
+          AuthFailure(AuthFailureType.invalidInput, message: 'Заполните ФИО'),
         );
       }
 
@@ -91,12 +94,19 @@ class SpringAuthRepository implements AuthRepository {
         options: Options(extra: {'skipAuth': true}),
       );
       final data = response.data;
-      if (data == null) throw StateError('Empty register response');
+      if (data == null) {
+        return Err(
+          NetworkFailure(
+            NetworkFailureType.unknown,
+            message: 'Empty register response',
+          ),
+        );
+      }
 
       await _tokenStorage.saveSession(
         AuthSession.fromJson(data, email: normalizedEmail),
       );
-      return AuthUser(id: normalizedEmail, email: normalizedEmail);
+      return Ok(AuthUser(id: normalizedEmail, email: normalizedEmail));
     });
   }
 
@@ -108,7 +118,7 @@ class SpringAuthRepository implements AuthRepository {
         data: {'email': email.trim()},
         options: Options(extra: {'skipAuth': true}),
       );
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 
@@ -123,7 +133,7 @@ class SpringAuthRepository implements AuthRepository {
         data: {'token': token, 'newPassword': newPassword},
         options: Options(extra: {'skipAuth': true}),
       );
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 
@@ -139,7 +149,7 @@ class SpringAuthRepository implements AuthRepository {
         );
       }
       await _tokenStorage.clearSession();
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 

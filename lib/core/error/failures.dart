@@ -30,6 +30,24 @@ enum AuthFailureType {
   unknown,
 }
 
+final class AppFailure extends Failure {
+  AppFailure(this.type, {this.message});
+
+  final AppFailureType type;
+
+  @override
+  final String? message;
+
+  @override
+  String get messageKey => switch (type) {
+    AppFailureType.invalidState => 'app_invalid_state',
+    AppFailureType.parse => 'app_parse',
+    AppFailureType.unknown => 'app_unknown',
+  };
+}
+
+enum AppFailureType { invalidState, parse, unknown }
+
 final class DatabaseFailure extends Failure {
   DatabaseFailure(this.type, {this.message});
 

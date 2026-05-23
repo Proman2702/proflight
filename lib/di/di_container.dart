@@ -9,42 +9,26 @@ import 'package:proflight/repositories/database/spring/spring_app_database_repos
 import 'package:proflight/repositories/server/spring_api_client.dart';
 import 'package:proflight/repositories/storage/token_storage.dart';
 
-enum BackendKind {
-  spring,
-  firebase;
+class DiContainer {
+  const DiContainer._({
+    required this.authRepository,
+    required this.databaseRepository,
+    void Function()? dispose,
+  }) : _dispose = dispose;
 
-  static BackendKind fromEnvironment() {
-    const value = String.fromEnvironment(
+  final AuthRepository authRepository;
+  final AppDatabaseRepository databaseRepository;
+  final void Function()? _dispose;
+
+  static Future<DiContainer> create() async {
+    const backend = String.fromEnvironment(
       'PROFLIGHT_BACKEND',
       defaultValue: 'spring',
     );
-    return value == 'firebase' ? BackendKind.firebase : BackendKind.spring;
-  }
-}
 
-class DiContainer {
-  DiContainer._({
-    required this.backendKind,
-    required this.authRepository,
-    required this.databaseRepository,
-    this.tokenStorage,
-  });
-
-  final BackendKind backendKind;
-  final AuthRepository authRepository;
-  final AppDatabaseRepository databaseRepository;
-  final TokenStorage? tokenStorage;
-
-  static Future<DiContainer> create({
-    BackendKind? backendKind,
-    String? springBaseUrl,
-  }) async {
-    final resolvedBackend = backendKind ?? BackendKind.fromEnvironment();
-
-    if (resolvedBackend == BackendKind.firebase) {
+    if (backend == 'firebase') {
       final authRepository = FirebaseAuthRepository(FirebaseAuth.instance);
       return DiContainer._(
-        backendKind: resolvedBackend,
         authRepository: authRepository,
         databaseRepository: FirebaseAppDatabaseRepository(
           FirebaseFirestore.instance,
@@ -54,25 +38,21 @@ class DiContainer {
     }
 
     final tokenStorage = await SharedPreferencesTokenStorage.create();
-    const envBaseUrl = String.fromEnvironment(
+    const baseUrl = String.fromEnvironment(
       'PROFLIGHT_API_BASE_URL',
       defaultValue: 'http://localhost:8080',
     );
     final apiClient = SpringApiClient(
-      baseUrl: springBaseUrl ?? envBaseUrl,
+      baseUrl: baseUrl,
       tokenStorage: tokenStorage,
     );
 
     return DiContainer._(
-      backendKind: resolvedBackend,
       authRepository: SpringAuthRepository(apiClient, tokenStorage),
       databaseRepository: SpringAppDatabaseRepository(apiClient),
-      tokenStorage: tokenStorage,
+      dispose: tokenStorage.dispose,
     );
   }
 
-  void dispose() {
-    final storage = tokenStorage;
-    if (storage is SharedPreferencesTokenStorage) storage.dispose();
-  }
+  void dispose() => _dispose?.call();
 }

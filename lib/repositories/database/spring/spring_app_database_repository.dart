@@ -1,4 +1,5 @@
 import 'package:proflight/core/error/result.dart';
+import 'package:proflight/core/error/failures.dart';
 import 'package:proflight/models/flight_data.dart';
 import 'package:proflight/models/pilot_profile.dart';
 import 'package:proflight/repositories/database/app_database_repository.dart';
@@ -15,10 +16,12 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
     return RepositoryGuard.spring(() async {
       final response = await _apiClient.dio.get<List<dynamic>>('/api/profiles');
       final data = response.data ?? const [];
-      return data
-          .cast<Map<String, dynamic>>()
-          .map(PilotProfile.fromJson)
-          .toList(growable: false);
+      return Ok(
+        data
+            .cast<Map<String, dynamic>>()
+            .map(PilotProfile.fromJson)
+            .toList(growable: false),
+      );
     });
   }
 
@@ -29,8 +32,15 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         '/api/profiles/$profileName',
       );
       final data = response.data;
-      if (data == null) throw StateError('Empty profile response');
-      return PilotProfile.fromJson(data);
+      if (data == null) {
+        return Err(
+          NetworkFailure(
+            NetworkFailureType.unknown,
+            message: 'Empty profile response',
+          ),
+        );
+      }
+      return Ok(PilotProfile.fromJson(data));
     });
   }
 
@@ -42,7 +52,7 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         data: profile.toCreateUpdateJson(),
       );
       final data = response.data;
-      return data == null ? profile : PilotProfile.fromJson(data);
+      return Ok(data == null ? profile : PilotProfile.fromJson(data));
     });
   }
 
@@ -54,7 +64,7 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         data: profile.toCreateUpdateJson(),
       );
       final data = response.data;
-      return data == null ? profile : PilotProfile.fromJson(data);
+      return Ok(data == null ? profile : PilotProfile.fromJson(data));
     });
   }
 
@@ -62,7 +72,7 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
   Future<Result<Unit>> deleteProfile(String profileName) {
     return RepositoryGuard.spring(() async {
       await _apiClient.dio.delete<void>('/api/profiles/$profileName');
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 
@@ -73,10 +83,12 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         '/api/profiles/$profileName/flight-data',
       );
       final data = response.data ?? const [];
-      return data
-          .cast<Map<String, dynamic>>()
-          .map(FlightData.fromJson)
-          .toList(growable: false);
+      return Ok(
+        data
+            .cast<Map<String, dynamic>>()
+            .map(FlightData.fromJson)
+            .toList(growable: false),
+      );
     });
   }
 
@@ -87,8 +99,15 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         '/api/flight-data/$id',
       );
       final data = response.data;
-      if (data == null) throw StateError('Empty flight data response');
-      return FlightData.fromJson(data);
+      if (data == null) {
+        return Err(
+          NetworkFailure(
+            NetworkFailureType.unknown,
+            message: 'Empty flight data response',
+          ),
+        );
+      }
+      return Ok(FlightData.fromJson(data));
     });
   }
 
@@ -103,8 +122,15 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
         data: flightData.toJson(),
       );
       final data = response.data;
-      if (data == null) throw StateError('Empty create flight data response');
-      return FlightData.fromJson(data);
+      if (data == null) {
+        return Err(
+          NetworkFailure(
+            NetworkFailureType.unknown,
+            message: 'Empty create flight data response',
+          ),
+        );
+      }
+      return Ok(FlightData.fromJson(data));
     });
   }
 
@@ -113,14 +139,19 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
     return RepositoryGuard.spring(() async {
       final id = flightData.id;
       if (id == null) {
-        throw ArgumentError('flightData.id is required for replace');
+        return Err(
+          DatabaseFailure(
+            DatabaseFailureType.invalidArgument,
+            message: 'flightData.id is required for replace',
+          ),
+        );
       }
       final response = await _apiClient.dio.put<Map<String, dynamic>>(
         '/api/flight-data/$id',
         data: flightData.toJson(),
       );
       final data = response.data;
-      return data == null ? flightData : FlightData.fromJson(data);
+      return Ok(data == null ? flightData : FlightData.fromJson(data));
     });
   }
 
@@ -128,7 +159,7 @@ class SpringAppDatabaseRepository implements AppDatabaseRepository {
   Future<Result<Unit>> deleteFlightData(int id) {
     return RepositoryGuard.spring(() async {
       await _apiClient.dio.delete<void>('/api/flight-data/$id');
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 }

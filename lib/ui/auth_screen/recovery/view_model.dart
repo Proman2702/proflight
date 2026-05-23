@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proflight/core/error/error_presentation.dart';
 import 'package:proflight/core/error/result.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
 
@@ -20,7 +21,7 @@ class RecoveryScreenModel extends ChangeNotifier {
     );
 
     if (result is Err<Unit>) {
-      _errorMessage = result.error.message ?? result.error.messageKey;
+      _errorMessage = result.error.userMessage;
       notifyListeners();
       return false;
     }

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:proflight/core/error/failures.dart';
 import 'package:proflight/core/error/result.dart';
 import 'package:proflight/models/auth_user.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
@@ -28,8 +29,15 @@ class FirebaseAuthRepository implements AuthRepository {
         password: password,
       );
       final user = cred.user;
-      if (user == null) throw StateError('Firebase user is null');
-      return user.toAuthUser();
+      if (user == null) {
+        return Err(
+          AuthFailure(
+            AuthFailureType.unknown,
+            message: 'Firebase user is empty',
+          ),
+        );
+      }
+      return Ok(user.toAuthUser());
     });
   }
 
@@ -50,8 +58,15 @@ class FirebaseAuthRepository implements AuthRepository {
         await cred.user?.updateDisplayName(fio.trim());
       }
       final user = cred.user;
-      if (user == null) throw StateError('Firebase user is null');
-      return user.toAuthUser();
+      if (user == null) {
+        return Err(
+          AuthFailure(
+            AuthFailureType.unknown,
+            message: 'Firebase user is empty',
+          ),
+        );
+      }
+      return Ok(user.toAuthUser());
     });
   }
 
@@ -59,7 +74,7 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<Result<Unit>> resetPassword({required String email}) {
     return RepositoryGuard.firebaseAuth(() async {
       await _auth.sendPasswordResetEmail(email: email.trim());
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 
@@ -70,7 +85,7 @@ class FirebaseAuthRepository implements AuthRepository {
   }) {
     return RepositoryGuard.firebaseAuth(() async {
       await _auth.confirmPasswordReset(code: token, newPassword: newPassword);
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 
@@ -78,7 +93,7 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<Result<Unit>> signOut() {
     return RepositoryGuard.firebaseAuth(() async {
       await _auth.signOut();
-      return const Unit();
+      return const Ok(Unit());
     });
   }
 }

@@ -5,9 +5,11 @@ import 'package:proflight/core/error/failures.dart';
 import 'package:proflight/core/error/result.dart';
 
 class RepositoryGuard {
-  static Future<Result<T>> firebaseAuth<T>(Future<T> Function() action) async {
+  static Future<Result<T>> firebaseAuth<T>(
+    Future<Result<T>> Function() action,
+  ) async {
     try {
-      return Ok(await action());
+      return await action();
     } on FirebaseAuthException catch (e) {
       return Err(_mapFirebaseAuthError(e));
     } catch (e) {
@@ -16,23 +18,24 @@ class RepositoryGuard {
   }
 
   static Future<Result<T>> firebaseDatabase<T>(
-    Future<T> Function() action,
+    Future<Result<T>> Function() action,
   ) async {
     try {
-      return Ok(await action());
+      return await action();
     } on FirebaseException catch (e) {
       return Err(_mapFirebaseDatabaseError(e));
     } catch (e) {
-      if (e is DatabaseFailure) return Err(e);
       return Err(
         DatabaseFailure(DatabaseFailureType.unknown, message: e.toString()),
       );
     }
   }
 
-  static Future<Result<T>> spring<T>(Future<T> Function() action) async {
+  static Future<Result<T>> spring<T>(
+    Future<Result<T>> Function() action,
+  ) async {
     try {
-      return Ok(await action());
+      return await action();
     } on DioException catch (e) {
       return Err(_mapDioError(e));
     } catch (e) {
