@@ -2,14 +2,24 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:proflight/navigation/stream_to_listenable.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
+import 'package:proflight/repositories/database/app_database_repository.dart';
 import 'package:proflight/ui/auth_screen/recovery/screen.dart';
 import 'package:proflight/ui/auth_screen/recovery/view_model.dart';
 import 'package:proflight/ui/auth_screen/register/screen.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
 import 'package:proflight/ui/auth_screen/screen.dart';
 import 'package:proflight/ui/auth_screen/view_model.dart';
-import 'package:proflight/ui/main_screen/screen.dart';
-import 'package:proflight/ui/main_screen/view_model.dart';
+import 'package:proflight/ui/export/screen.dart';
+import 'package:proflight/ui/export/view_model.dart';
+import 'package:proflight/ui/flight_edit/screen.dart';
+import 'package:proflight/ui/flight_edit/view_model.dart';
+import 'package:proflight/ui/flights/screen.dart';
+import 'package:proflight/ui/flights/view_model.dart';
+import 'package:proflight/ui/home/screen.dart';
+import 'package:proflight/ui/home/view_model.dart';
+import 'package:proflight/ui/main_shell.dart';
+import 'package:proflight/ui/profile/screen.dart';
+import 'package:proflight/ui/profile/view_model.dart';
 
 class AppRouter {
   AppRouter(this._authRepository)
@@ -23,7 +33,8 @@ class AppRouter {
         final inAuthFlow = path == '/auth' || path.startsWith('/auth/');
 
         if (!loggedIn && !inAuthFlow) return '/auth';
-        if (loggedIn && inAuthFlow) return '/main';
+        if (loggedIn && inAuthFlow) return '/main/home';
+        if (loggedIn && path == '/main') return '/main/home';
         return null;
       },
       routes: [
@@ -53,13 +64,72 @@ class AppRouter {
             ),
           ],
         ),
-        GoRoute(
-          path: '/main',
-          builder: (context, state) => ChangeNotifierProvider(
-            create: (context) =>
-                MainScreenModel(context.read<AuthRepository>()),
-            child: const MainScreen(),
-          ),
+        ShellRoute(
+          builder: (context, state, child) {
+            return MainShell(currentPath: state.uri.path, child: child);
+          },
+          routes: [
+            GoRoute(
+              path: '/main/home',
+              builder: (context, state) => ChangeNotifierProvider(
+                create: (context) =>
+                    HomeViewModel(context.read<AppDatabaseRepository>())
+                      ..load(),
+                child: const HomeScreen(),
+              ),
+            ),
+            GoRoute(
+              path: '/main/flights',
+              builder: (context, state) => ChangeNotifierProvider(
+                create: (context) =>
+                    FlightsViewModel(context.read<AppDatabaseRepository>())
+                      ..load(),
+                child: const FlightsScreen(),
+              ),
+            ),
+            GoRoute(
+              path: '/main/flights/new',
+              builder: (context, state) => ChangeNotifierProvider(
+                create: (context) => FlightEditViewModel(
+                  context.read<AppDatabaseRepository>(),
+                  null,
+                )..load(),
+                child: const FlightEditScreen(),
+              ),
+            ),
+            GoRoute(
+              path: '/main/flights/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return ChangeNotifierProvider(
+                  create: (context) => FlightEditViewModel(
+                    context.read<AppDatabaseRepository>(),
+                    id,
+                  )..load(),
+                  child: const FlightEditScreen(),
+                );
+              },
+            ),
+            GoRoute(
+              path: '/main/export',
+              builder: (context, state) => ChangeNotifierProvider(
+                create: (context) =>
+                    ExportViewModel(context.read<AppDatabaseRepository>())
+                      ..load(),
+                child: const ExportScreen(),
+              ),
+            ),
+            GoRoute(
+              path: '/main/profile',
+              builder: (context, state) => ChangeNotifierProvider(
+                create: (context) => ProfileViewModel(
+                  context.read<AuthRepository>(),
+                  context.read<AppDatabaseRepository>(),
+                )..load(),
+                child: const ProfileScreen(),
+              ),
+            ),
+          ],
         ),
       ],
     );

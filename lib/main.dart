@@ -45,6 +45,14 @@ class App extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           routerConfig: context.read<AppRouter>().router,
           theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF4C9AC4),
+              secondary: Color(0xFFC38091),
+              surface: Color(0xFF181818),
+              error: Color(0xFFE53B3B),
+            ),
+            scaffoldBackgroundColor: const Color(0xFF121212),
             textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme),
           ),
         ),
