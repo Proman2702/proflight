@@ -2,10 +2,7 @@ import 'failure.dart';
 
 extension FailurePresentation on Failure {
   String get userMessage {
-    final rawMessage = message?.trim();
-    if (rawMessage != null && rawMessage.isNotEmpty) return rawMessage;
-
-    return switch (messageKey) {
+    final mapped = switch (messageKey) {
       'auth_invalid_input' => 'Проверьте введенные данные',
       'auth_exists' => 'Аккаунт с такими данными уже существует',
       'auth_weak_password' => 'Пароль слишком простой',
@@ -24,7 +21,12 @@ extension FailurePresentation on Failure {
       'network_not_found' => 'Данные не найдены',
       'network_conflict' => 'Такая запись уже существует',
       'network_unavailable' => 'Сервер временно недоступен',
-      _ => 'Неизвестная ошибка',
+      _ => null,
     };
+    if (mapped != null) return mapped;
+
+    final rawMessage = message?.trim();
+    if (rawMessage != null && rawMessage.isNotEmpty) return rawMessage;
+    return 'Неизвестная ошибка';
   }
 }

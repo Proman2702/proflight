@@ -4,18 +4,29 @@ import 'package:proflight/ui/common/flight_stats.dart';
 import 'package:proflight/ui/common/time_badge.dart';
 
 class PeriodStatCard extends StatelessWidget {
-  const PeriodStatCard({required this.title, required this.stats, super.key});
+  const PeriodStatCard({
+    required this.title,
+    required this.stats,
+    this.highlighted = false,
+    super.key,
+  });
 
   final String title;
   final FlightStats stats;
+  final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: CustomColors.surface,
+        color: highlighted ? const Color(0xFF111319) : CustomColors.surface,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: highlighted
+              ? CustomColors.accent1.withValues(alpha: 0.55)
+              : Colors.transparent,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,10 +35,12 @@ class PeriodStatCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: CustomColors.mainText,
-                    fontWeight: FontWeight.w700,
+                  '$title:',
+                  style: TextStyle(
+                    color: highlighted
+                        ? CustomColors.main
+                        : CustomColors.mainText,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
@@ -35,12 +48,12 @@ class PeriodStatCard extends StatelessWidget {
                 'Вылетов: ${stats.flights}',
                 style: const TextStyle(
                   color: CustomColors.mainText,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 11),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

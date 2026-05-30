@@ -52,6 +52,13 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ProfileMenuTile(
+            icon: Icons.pin_drop_outlined,
+            title: 'Коды аэропортов',
+            trailingText: model.airportCodeFormat,
+            onTap: () => _showAirportCodeEditor(context),
+          ),
+          const SizedBox(height: 8),
+          ProfileMenuTile(
             icon: Icons.backup_outlined,
             title: 'Бэкап данных',
             onTap: () => showAppMessage(context, 'Раздел будет добавлен позже'),
@@ -107,22 +114,27 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 12),
               TextField(
                 controller: model.fioController,
+                style: const TextStyle(color: CustomColors.main),
                 decoration: const InputDecoration(labelText: 'ФИО'),
               ),
               TextField(
                 controller: model.companyController,
+                style: const TextStyle(color: CustomColors.main),
                 decoration: const InputDecoration(labelText: 'Компания'),
               ),
               TextField(
                 controller: model.addAllController,
+                style: const TextStyle(color: CustomColors.main),
                 decoration: const InputDecoration(labelText: 'Add all'),
               ),
               TextField(
                 controller: model.addDayController,
+                style: const TextStyle(color: CustomColors.main),
                 decoration: const InputDecoration(labelText: 'Add day'),
               ),
               TextField(
                 controller: model.addNightController,
+                style: const TextStyle(color: CustomColors.main),
                 decoration: const InputDecoration(labelText: 'Add night'),
               ),
               const SizedBox(height: 12),
@@ -143,6 +155,131 @@ class ProfileScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _showAirportCodeEditor(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: CustomColors.surface,
+      builder: (context) {
+        final model = context.watch<ProfileViewModel>();
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Коды аэропортов',
+                style: TextStyle(
+                  color: CustomColors.main,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Как отображать и добавлять аэропорты в полетах.',
+                style: TextStyle(
+                  color: CustomColors.mainText,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 14),
+              _AirportCodeButton(
+                label: 'IATA',
+                description: 'Трехбуквенный код: SVO, CDG, JFK',
+                selected: model.airportCodeFormat == 'IATA',
+                onTap: () => _saveAirportCodeFormat(context, 'IATA'),
+              ),
+              const SizedBox(height: 8),
+              _AirportCodeButton(
+                label: 'ICAO',
+                description: 'Четырехбуквенный код: UUEE, LFPG, KJFK',
+                selected: model.airportCodeFormat == 'ICAO',
+                onTap: () => _saveAirportCodeFormat(context, 'ICAO'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _saveAirportCodeFormat(
+    BuildContext context,
+    String value,
+  ) async {
+    final result = await context.read<ProfileViewModel>().saveAirportCodeFormat(
+      value,
+    );
+    if (!context.mounted) return;
+    if (result is Err<PilotProfile>) {
+      showAppToast(context, result.error);
+      return;
+    }
+    Navigator.pop(context);
+    showAppMessage(context, 'Формат кодов обновлен');
+  }
+}
+
+class _AirportCodeButton extends StatelessWidget {
+  const _AirportCodeButton({
+    required this.label,
+    required this.description,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String description;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected ? CustomColors.surfaceHigh : CustomColors.mainDark,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: Row(
+            children: [
+              Icon(
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                color: selected ? CustomColors.accent1 : CustomColors.mainText,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        color: CustomColors.main,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      description,
+                      style: const TextStyle(
+                        color: CustomColors.mainText,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

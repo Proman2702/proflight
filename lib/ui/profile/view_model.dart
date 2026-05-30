@@ -24,6 +24,8 @@ class ProfileViewModel extends ChangeNotifier {
   final addDayController = TextEditingController();
   final addNightController = TextEditingController();
 
+  String get airportCodeFormat => profile?.airportCodeFormat ?? 'IATA';
+
   Failure? takeFailure() {
     final failure = _failure;
     _failure = null;
@@ -64,10 +66,46 @@ class ProfileViewModel extends ChangeNotifier {
       company: companyController.text.trim().isEmpty
           ? null
           : companyController.text.trim(),
+      flytimeAll: current.flytimeAll,
+      flytimeDay: current.flytimeDay,
+      flytimeNight: current.flytimeNight,
       addAll: int.tryParse(addAllController.text.trim()) ?? current.addAll,
       addDay: int.tryParse(addDayController.text.trim()) ?? current.addDay,
       addNight:
           int.tryParse(addNightController.text.trim()) ?? current.addNight,
+      airportCodeFormat: current.airportCodeFormat,
+    );
+    final result = await _databaseRepository.replaceProfile(next);
+    if (result is Ok<PilotProfile>) {
+      profile = result.value;
+      _fill(profile);
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<Result<PilotProfile>> saveAirportCodeFormat(String value) async {
+    final current = profile;
+    if (current == null) {
+      return Err(
+        DatabaseFailure(
+          DatabaseFailureType.notFound,
+          message: 'Профиль не найден',
+        ),
+      );
+    }
+
+    final next = PilotProfile(
+      profileName: current.profileName,
+      fio: current.fio,
+      company: current.company,
+      flytimeAll: current.flytimeAll,
+      flytimeDay: current.flytimeDay,
+      flytimeNight: current.flytimeNight,
+      addAll: current.addAll,
+      addDay: current.addDay,
+      addNight: current.addNight,
+      airportCodeFormat: value,
     );
     final result = await _databaseRepository.replaceProfile(next);
     if (result is Ok<PilotProfile>) {

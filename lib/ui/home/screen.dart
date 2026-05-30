@@ -24,48 +24,72 @@ class HomeScreen extends StatelessWidget {
       child: RefreshIndicator(
         onRefresh: context.read<HomeViewModel>().load,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 24),
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 18),
           children: [
             ProfileDateHeader(profile: model.profile),
-            const SizedBox(height: 28),
+            const SizedBox(height: 26),
             if (model.isLoading)
               const Padding(
-                padding: EdgeInsets.only(top: 120),
+                padding: EdgeInsets.symmetric(vertical: 70),
                 child: Center(child: CircularProgressIndicator()),
               )
-            else ...[
+            else
               FlightTimeSummary(stats: model.totalStats),
-              const SizedBox(height: 16),
+            if (!model.isLoading) ...[
+              const SizedBox(height: 10),
               Container(
                 height: 42,
-                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: CustomColors.surface,
                   borderRadius: BorderRadius.circular(12),
                 ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Вылетов',
+                        style: TextStyle(
+                          color: CustomColors.mainText,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${model.totalStats.flights}',
+                      style: const TextStyle(
+                        color: CustomColors.main,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 18),
+                    const Icon(Icons.more_horiz, color: CustomColors.mainText),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              PeriodStatCard(
+                title: 'За день',
+                stats: model.todayStats,
+                highlighted: true,
+              ),
+              const SizedBox(height: 10),
+              const Center(
                 child: Text(
-                  'Вылетов: ${model.totalStats.flights}',
-                  style: const TextStyle(
-                    color: CustomColors.main,
-                    fontWeight: FontWeight.w800,
+                  'Прочие периоды',
+                  style: TextStyle(
+                    color: CustomColors.mainText,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Center(
-                child: Text(
-                  'Полетные периоды',
-                  style: TextStyle(color: CustomColors.mainText),
-                ),
-              ),
-              const SizedBox(height: 12),
-              PeriodStatCard(title: 'За день:', stats: model.todayStats),
               const SizedBox(height: 10),
-              PeriodStatCard(title: 'За неделю:', stats: model.weekStats),
+              PeriodStatCard(title: 'За неделю', stats: model.weekStats),
               const SizedBox(height: 10),
-              PeriodStatCard(title: 'За месяц:', stats: model.monthStats),
+              PeriodStatCard(title: 'За месяц', stats: model.monthStats),
               const SizedBox(height: 10),
-              PeriodStatCard(title: 'За год:', stats: model.yearStats),
+              PeriodStatCard(title: 'За год', stats: model.yearStats),
             ],
           ],
         ),

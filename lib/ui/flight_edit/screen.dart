@@ -175,6 +175,7 @@ class FlightEditScreen extends StatelessWidget {
       child: TextField(
         controller: controller,
         keyboardType: number ? TextInputType.number : TextInputType.text,
+        style: const TextStyle(color: CustomColors.main),
         decoration: InputDecoration(labelText: label),
       ),
     );

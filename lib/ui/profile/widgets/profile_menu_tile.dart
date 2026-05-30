@@ -6,12 +6,14 @@ class ProfileMenuTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
+    this.trailingText,
     super.key,
   });
 
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final String? trailingText;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,16 @@ class ProfileMenuTile extends StatelessWidget {
                   ),
                 ),
               ),
+              if (trailingText != null) ...[
+                Text(
+                  trailingText!,
+                  style: const TextStyle(
+                    color: CustomColors.mainText,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
               const Icon(
                 Icons.chevron_right,
                 color: CustomColors.mainText,

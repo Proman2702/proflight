@@ -12,6 +12,8 @@ class RepositoryGuard {
       return await action();
     } on FirebaseAuthException catch (e) {
       return Err(_mapFirebaseAuthError(e));
+    } on FirebaseException catch (e) {
+      return Err(_mapFirebaseDatabaseError(e));
     } catch (e) {
       return Err(AuthFailure(AuthFailureType.unknown, message: e.toString()));
     }
@@ -47,31 +49,14 @@ class RepositoryGuard {
 
   static AuthFailure _mapFirebaseAuthError(FirebaseAuthException e) {
     return switch (e.code) {
-      'invalid-email' => AuthFailure(
-        AuthFailureType.invalidInput,
-        message: e.message,
-      ),
-      'email-already-in-use' => AuthFailure(
-        AuthFailureType.exists,
-        message: e.message,
-      ),
-      'weak-password' => AuthFailure(
-        AuthFailureType.weakPassword,
-        message: e.message,
-      ),
-      'user-not-found' => AuthFailure(
-        AuthFailureType.notFound,
-        message: e.message,
-      ),
-      'wrong-password' || 'invalid-credential' => AuthFailure(
-        AuthFailureType.wrongCredentials,
-        message: e.message,
-      ),
-      'requires-recent-login' => AuthFailure(
-        AuthFailureType.unauthorized,
-        message: e.message,
-      ),
-      _ => AuthFailure(AuthFailureType.unknown, message: e.message),
+      'invalid-email' => AuthFailure(AuthFailureType.invalidInput),
+      'email-already-in-use' => AuthFailure(AuthFailureType.exists),
+      'weak-password' => AuthFailure(AuthFailureType.weakPassword),
+      'user-not-found' => AuthFailure(AuthFailureType.notFound),
+      'wrong-password' ||
+      'invalid-credential' => AuthFailure(AuthFailureType.wrongCredentials),
+      'requires-recent-login' => AuthFailure(AuthFailureType.unauthorized),
+      _ => AuthFailure(AuthFailureType.unknown),
     };
   }
 
@@ -79,25 +64,14 @@ class RepositoryGuard {
     return switch (e.code) {
       'permission-denied' => DatabaseFailure(
         DatabaseFailureType.permissionDenied,
-        message: e.message,
       ),
-      'unauthenticated' => DatabaseFailure(
-        DatabaseFailureType.unauthenticated,
-        message: e.message,
-      ),
-      'not-found' => DatabaseFailure(
-        DatabaseFailureType.notFound,
-        message: e.message,
-      ),
-      'unavailable' => DatabaseFailure(
-        DatabaseFailureType.unavailable,
-        message: e.message,
-      ),
+      'unauthenticated' => DatabaseFailure(DatabaseFailureType.unauthenticated),
+      'not-found' => DatabaseFailure(DatabaseFailureType.notFound),
+      'unavailable' => DatabaseFailure(DatabaseFailureType.unavailable),
       'invalid-argument' => DatabaseFailure(
         DatabaseFailureType.invalidArgument,
-        message: e.message,
       ),
-      _ => DatabaseFailure(DatabaseFailureType.unknown, message: e.message),
+      _ => DatabaseFailure(DatabaseFailureType.unknown),
     };
   }
 

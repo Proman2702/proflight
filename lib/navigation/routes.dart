@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:proflight/navigation/stream_to_listenable.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
@@ -40,93 +41,123 @@ class AppRouter {
       routes: [
         GoRoute(
           path: '/auth',
-          builder: (context, state) => ChangeNotifierProvider(
-            create: (context) =>
-                AuthScreenModel(context.read<AuthRepository>()),
-            child: const AuthScreen(),
+          pageBuilder: (context, state) => _noTransitionPage(
+            ChangeNotifierProvider(
+              create: (context) =>
+                  AuthScreenModel(context.read<AuthRepository>()),
+              child: const AuthScreen(),
+            ),
           ),
           routes: [
             GoRoute(
               path: 'register',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) =>
-                    RegisterScreenModel(context.read<AuthRepository>()),
-                child: const RegisterScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) =>
+                      RegisterScreenModel(context.read<AuthRepository>()),
+                  child: const RegisterScreen(),
+                ),
               ),
             ),
             GoRoute(
               path: 'recovery',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) =>
-                    RecoveryScreenModel(context.read<AuthRepository>()),
-                child: const RecoveryScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) =>
+                      RecoveryScreenModel(context.read<AuthRepository>()),
+                  child: const RecoveryScreen(),
+                ),
               ),
             ),
           ],
         ),
         ShellRoute(
-          builder: (context, state, child) {
-            return MainShell(currentPath: state.uri.path, child: child);
-          },
+          pageBuilder: (context, state, child) => _noTransitionPage(
+            MainShell(currentPath: state.uri.path, child: child),
+          ),
           routes: [
             GoRoute(
               path: '/main/home',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) =>
-                    HomeViewModel(context.read<AppDatabaseRepository>())
-                      ..load(),
-                child: const HomeScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) => _deferredLoad(
+                    HomeViewModel(context.read<AppDatabaseRepository>()),
+                    (model) => model.load(),
+                  ),
+                  child: const HomeScreen(),
+                ),
               ),
             ),
             GoRoute(
               path: '/main/flights',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) =>
-                    FlightsViewModel(context.read<AppDatabaseRepository>())
-                      ..load(),
-                child: const FlightsScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) => _deferredLoad(
+                    FlightsViewModel(context.read<AppDatabaseRepository>()),
+                    (model) => model.load(),
+                  ),
+                  child: const FlightsScreen(),
+                ),
               ),
             ),
             GoRoute(
               path: '/main/flights/new',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) => FlightEditViewModel(
-                  context.read<AppDatabaseRepository>(),
-                  null,
-                )..load(),
-                child: const FlightEditScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) => _deferredLoad(
+                    FlightEditViewModel(
+                      context.read<AppDatabaseRepository>(),
+                      null,
+                    ),
+                    (model) => model.load(),
+                  ),
+                  child: const FlightEditScreen(),
+                ),
               ),
             ),
             GoRoute(
               path: '/main/flights/:id',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final id = int.tryParse(state.pathParameters['id'] ?? '');
-                return ChangeNotifierProvider(
-                  create: (context) => FlightEditViewModel(
-                    context.read<AppDatabaseRepository>(),
-                    id,
-                  )..load(),
-                  child: const FlightEditScreen(),
+                return _noTransitionPage(
+                  ChangeNotifierProvider(
+                    create: (context) => _deferredLoad(
+                      FlightEditViewModel(
+                        context.read<AppDatabaseRepository>(),
+                        id,
+                      ),
+                      (model) => model.load(),
+                    ),
+                    child: const FlightEditScreen(),
+                  ),
                 );
               },
             ),
             GoRoute(
               path: '/main/export',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) =>
-                    ExportViewModel(context.read<AppDatabaseRepository>())
-                      ..load(),
-                child: const ExportScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) => _deferredLoad(
+                    ExportViewModel(context.read<AppDatabaseRepository>()),
+                    (model) => model.load(),
+                  ),
+                  child: const ExportScreen(),
+                ),
               ),
             ),
             GoRoute(
               path: '/main/profile',
-              builder: (context, state) => ChangeNotifierProvider(
-                create: (context) => ProfileViewModel(
-                  context.read<AuthRepository>(),
-                  context.read<AppDatabaseRepository>(),
-                )..load(),
-                child: const ProfileScreen(),
+              pageBuilder: (context, state) => _noTransitionPage(
+                ChangeNotifierProvider(
+                  create: (context) => _deferredLoad(
+                    ProfileViewModel(
+                      context.read<AuthRepository>(),
+                      context.read<AppDatabaseRepository>(),
+                    ),
+                    (model) => model.load(),
+                  ),
+                  child: const ProfileScreen(),
+                ),
               ),
             ),
           ],
@@ -141,4 +172,15 @@ class AppRouter {
   late final GoRouter router;
 
   void dispose() => _refresh.dispose();
+}
+
+T _deferredLoad<T>(T model, Future<void> Function(T model) load) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    load(model);
+  });
+  return model;
+}
+
+NoTransitionPage<void> _noTransitionPage(Widget child) {
+  return NoTransitionPage<void>(child: child);
 }

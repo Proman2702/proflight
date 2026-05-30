@@ -9,6 +9,7 @@ class PilotProfile {
     this.addAll = 0,
     this.addDay = 0,
     this.addNight = 0,
+    this.airportCodeFormat = 'IATA',
   });
 
   final String profileName;
@@ -20,6 +21,7 @@ class PilotProfile {
   final int addAll;
   final int addDay;
   final int addNight;
+  final String airportCodeFormat;
 
   factory PilotProfile.fromJson(Map<String, dynamic> json) => PilotProfile(
     profileName: json['profileName'] as String,
@@ -31,6 +33,7 @@ class PilotProfile {
     addAll: json['addAll'] as int? ?? 0,
     addDay: json['addDay'] as int? ?? 0,
     addNight: json['addNight'] as int? ?? 0,
+    airportCodeFormat: json['airportCodeFormat'] as String? ?? 'IATA',
   );
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +46,7 @@ class PilotProfile {
     'addAll': addAll,
     'addDay': addDay,
     'addNight': addNight,
+    'airportCodeFormat': airportCodeFormat,
   };
 
   Map<String, dynamic> toCreateUpdateJson() => {

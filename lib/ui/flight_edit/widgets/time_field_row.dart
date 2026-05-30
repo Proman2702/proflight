@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proflight/etc/colors.dart';
 
 class TimeFieldRow extends StatelessWidget {
   const TimeFieldRow({
@@ -40,6 +41,7 @@ class _Field extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      style: const TextStyle(color: CustomColors.main),
       decoration: InputDecoration(labelText: label),
       keyboardType: TextInputType.datetime,
     );

@@ -11,11 +11,15 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColors.mainDark,
       body: child,
       bottomNavigationBar: NavigationBar(
+        height: 68,
         selectedIndex: _selectedIndex(currentPath),
-        backgroundColor: CustomColors.surface,
+        backgroundColor: const Color(0xFF101114),
         indicatorColor: CustomColors.accent1.withValues(alpha: 0.22),
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.black,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         onDestinationSelected: (index) {
           final path = switch (index) {

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/etc/colors.dart';
-import 'package:proflight/ui/additional/custom_button.dart';
 import 'package:proflight/ui/async_helper.dart';
-import 'package:proflight/ui/additional/custom_text_field.dart';
 import 'package:proflight/ui/auth_screen/register/view_model.dart';
+import 'package:proflight/ui/common/app_toast.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -13,377 +11,297 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RegisterScreenModel model = context.watch<RegisterScreenModel>();
+    final model = context.watch<RegisterScreenModel>();
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [CustomColors.background1, CustomColors.background2],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-      ),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Center(
+    return Scaffold(
+      backgroundColor: CustomColors.mainDark,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(26, 24, 26, 24),
             child: Column(
               children: [
-                SizedBox(height: 120),
-
-                Text(
-                  "Регистрация",
-                  style: GoogleFonts.nunito(
-                    textStyle: TextStyle(
-                      color: CustomColors.main,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 40,
-                      letterSpacing: 2,
-                    ),
-                  ),
+                _AuthHeader(
+                  title: 'Регистрация',
+                  step: model.step,
+                  onBack: () => model.step == 0
+                      ? context.go('/auth')
+                      : model.stepDecrement(),
                 ),
-                SizedBox(height: 50),
-                _StepHeader(currentStep: model.step),
-
-                SizedBox(height: 35),
-                _InputWindow(currentStep: model.step),
-                SizedBox(height: 35),
+                const SizedBox(height: 42),
+                _StepFields(step: model.step),
+                const SizedBox(height: 58),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    CustomButton(
-                      onTap: model.stepDecrement,
-                      text: "Вернуться",
-                      width: 140,
-                      height: 40,
-                      color: CustomColors.accent2,
-                      fontSize: 18,
+                    SizedBox(
+                      width: 132,
+                      height: 38,
+                      child: OutlinedButton(
+                        onPressed: () => model.step == 0
+                            ? context.go('/auth')
+                            : model.stepDecrement(),
+                        child: const Text('Назад'),
+                      ),
                     ),
-                    SizedBox(width: 15),
-                    CustomButton(
-                      onTap: model.allowRegister()
-                          ? () async {
-                              final success = await withLoadingDialog<bool>(
-                                context: context,
-                                action: model.registerUser,
-                              );
-                              if (!context.mounted) return;
-
-                              if (!success) {
-                                showDialog(
+                    const SizedBox(width: 14),
+                    SizedBox(
+                      width: 132,
+                      height: 38,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: CustomColors.accent1,
+                          foregroundColor: CustomColors.main,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: model.allowRegister()
+                            ? () async {
+                                final success = await withLoadingDialog<bool>(
                                   context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text(
-                                      model.errorMessage ??
-                                          'Неизвестная ошибка',
-                                    ),
-                                  ),
+                                  action: model.registerUser,
                                 );
-                              } else {
+                                if (!context.mounted) return;
+                                if (!success) {
+                                  showAppMessage(
+                                    context,
+                                    model.errorMessage ?? 'Неизвестная ошибка',
+                                  );
+                                  return;
+                                }
                                 context.go('/main');
                               }
-                            }
-                          : model.stepIncrement,
-                      text: "Далее",
-                      width: 140,
-                      height: 40,
-                      color: CustomColors.accent2,
-                      fontSize: 18,
+                            : model.stepIncrement,
+                        child: Text(
+                          model.allowRegister() ? 'Создать' : 'Далее',
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 42),
+                GestureDetector(
+                  onTap: () => context.go('/auth'),
+                  child: const Text(
+                    'Уже есть профиль',
+                    style: TextStyle(
+                      color: CustomColors.mainText,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
-        backgroundColor: Colors.transparent,
       ),
     );
   }
 }
 
-class _InputWindow extends StatelessWidget {
-  final int currentStep;
-  const _InputWindow({required this.currentStep});
+class _AuthHeader extends StatelessWidget {
+  const _AuthHeader({
+    required this.title,
+    required this.step,
+    required this.onBack,
+  });
+
+  final String title;
+  final int step;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            onPressed: onBack,
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: CustomColors.main,
+            ),
+          ),
+        ),
+        Container(
+          width: 66,
+          height: 66,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: CustomColors.accent1,
+            shape: BoxShape.circle,
+          ),
+          child: const Text(
+            'P',
+            style: TextStyle(
+              color: CustomColors.main,
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          title,
+          style: const TextStyle(
+            color: CustomColors.main,
+            fontSize: 34,
+            height: 1,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 18),
+        _StepDots(step: step),
+      ],
+    );
+  }
+}
+
+class _StepDots extends StatelessWidget {
+  const _StepDots({required this.step});
+
+  final int step;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var index = 0; index < 3; index++) ...[
+          Container(
+            width: index == step ? 28 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: index <= step
+                  ? CustomColors.accent1
+                  : CustomColors.surfaceHigh,
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+          if (index != 2) const SizedBox(width: 7),
+        ],
+      ],
+    );
+  }
+}
+
+class _StepFields extends StatelessWidget {
+  const _StepFields({required this.step});
+
+  final int step;
 
   @override
   Widget build(BuildContext context) {
     final model = context.read<RegisterScreenModel>();
-
-    return Container(
-      height: 250,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+    return switch (step) {
+      0 => Column(
+        children: [
+          _AuthTextField(
+            controller: model.emailController,
+            hint: 'Почта',
+            icon: Icons.mail_outline,
+          ),
+          const SizedBox(height: 14),
+          _AuthTextField(
+            controller: model.passwordController,
+            hint: 'Пароль',
+            icon: Icons.lock_outline,
+            obscureText: true,
+          ),
+        ],
       ),
-      child: switch (currentStep) {
-        0 => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-            Text(
-              'Почта',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              controller: model.emailController,
-              key: const ValueKey("email"),
-
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Пароль',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.passwordController,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-          ],
-        ),
-        1 => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-            Text(
-              'Фио',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.nameController,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Авиакомпания',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.companyController,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Судно',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.boardController,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-          ],
-        ),
-        2 => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-            Text(
-              'Часов всего',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.totalHoursController,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Часов еще че то',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.totalHours1Controller,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-            SizedBox(height: 15),
-            Text(
-              'Ну и еще',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: CustomColors.main,
-                fontSize: 16,
-              ),
-            ),
-            CustomTextField(
-              key: UniqueKey(),
-              controller: model.totalHours2Controller,
-              width: 300,
-              shadow: true,
-              borderRadius: 15,
-            ),
-          ],
-        ),
-        _ => SizedBox(),
-      },
-    );
+      1 => Column(
+        children: [
+          _AuthTextField(
+            controller: model.nameController,
+            hint: 'ФИО',
+            icon: Icons.person_outline,
+          ),
+          const SizedBox(height: 14),
+          _AuthTextField(
+            controller: model.companyController,
+            hint: 'Авиакомпания',
+            icon: Icons.business_outlined,
+          ),
+          const SizedBox(height: 14),
+          _AuthTextField(
+            controller: model.boardController,
+            hint: 'Название профиля',
+            icon: Icons.badge_outlined,
+          ),
+        ],
+      ),
+      _ => Column(
+        children: [
+          _AuthTextField(
+            controller: model.totalHoursController,
+            hint: 'Налет всего',
+            icon: Icons.schedule,
+          ),
+          const SizedBox(height: 14),
+          _AuthTextField(
+            controller: model.totalHours1Controller,
+            hint: 'Налет днем',
+            icon: Icons.wb_sunny_outlined,
+          ),
+          const SizedBox(height: 14),
+          _AuthTextField(
+            controller: model.totalHours2Controller,
+            hint: 'Налет ночью',
+            icon: Icons.nightlight_outlined,
+          ),
+        ],
+      ),
+    };
   }
 }
 
-class _StepHeader extends StatelessWidget {
-  final int currentStep;
+class _AuthTextField extends StatelessWidget {
+  const _AuthTextField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    this.obscureText = false,
+  });
 
-  const _StepHeader({required this.currentStep});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _StepCircle(index: 0, currentStep: currentStep),
-            _StepLine(isActive: currentStep >= 1),
-            _StepCircle(index: 1, currentStep: currentStep),
-            _StepLine(isActive: currentStep >= 2),
-            _StepCircle(index: 2, currentStep: currentStep),
-          ],
-        ),
-        SizedBox(height: 5),
-        switch (currentStep) {
-          0 => Container(
-            width: 310,
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: 120,
-              child: Text(
-                'Введите данные для входа',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: CustomColors.main, fontSize: 12),
-                maxLines: 2,
-                softWrap: true,
-              ),
-            ),
-          ),
-          1 => SizedBox(
-            width: 120,
-            child: Text(
-              'Введите данные о себе',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: CustomColors.main, fontSize: 12),
-              maxLines: 2,
-              softWrap: true,
-            ),
-          ),
-          2 => Container(
-            width: 310,
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              width: 120,
-              child: Text(
-                'Укажите кол-во часов налета',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: CustomColors.main, fontSize: 12),
-                maxLines: 2,
-                softWrap: true,
-              ),
-            ),
-          ),
-          _ => SizedBox(),
-        },
-      ],
-    );
-  }
-}
-
-class _StepCircle extends StatelessWidget {
-  final int index;
-  final int currentStep;
-
-  const _StepCircle({required this.index, required this.currentStep});
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
-    final isActive = index == currentStep;
-    final isDone = index < currentStep;
-
-    return Column(
-      children: [
-        Container(
-          width: 45,
-          height: 45,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isActive || isDone
-                ? CustomColors.accent2
-                : CustomColors.inActive,
-            shape: BoxShape.circle,
+    return SizedBox(
+      width: 300,
+      height: 44,
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        style: const TextStyle(color: CustomColors.mainDark, fontSize: 17),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Color(0xFF6F737C)),
+          prefixIcon: Icon(icon, color: CustomColors.accent1, size: 22),
+          filled: true,
+          fillColor: const Color(0xFFEEF1F6),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide.none,
           ),
-          child: Text(
-            '${index + 1}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: CustomColors.accent1, width: 2),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _StepLine extends StatelessWidget {
-  final bool isActive;
-
-  const _StepLine({required this.isActive});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 50,
-      height: 4,
-      color: isActive ? CustomColors.accent2 : CustomColors.inActive,
+      ),
     );
   }
 }

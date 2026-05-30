@@ -16,6 +16,7 @@ class AuthGateViewModel extends ChangeNotifier {
 
   final AuthRepository _authService;
   StreamSubscription<AuthUser?>? _subscription;
+  bool _disposed = false;
 
   AuthStatus _userState = AuthStatus.unknown;
 
@@ -25,11 +26,14 @@ class AuthGateViewModel extends ChangeNotifier {
     _userState = user == null
         ? AuthStatus.unauthenticated
         : AuthStatus.authenticated;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_disposed) notifyListeners();
+    });
   }
 
   @override
   void dispose() {
+    _disposed = true;
     _subscription?.cancel();
     super.dispose();
   }

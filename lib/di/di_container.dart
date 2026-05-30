@@ -23,15 +23,19 @@ class DiContainer {
   static Future<DiContainer> create() async {
     const backend = String.fromEnvironment(
       'PROFLIGHT_BACKEND',
-      defaultValue: 'spring',
+      defaultValue: 'firebase',
     );
 
     if (backend == 'firebase') {
-      final authRepository = FirebaseAuthRepository(FirebaseAuth.instance);
+      final firestore = FirebaseFirestore.instance;
+      final authRepository = FirebaseAuthRepository(
+        FirebaseAuth.instance,
+        firestore,
+      );
       return DiContainer._(
         authRepository: authRepository,
         databaseRepository: FirebaseAppDatabaseRepository(
-          FirebaseFirestore.instance,
+          firestore,
           authRepository,
         ),
       );

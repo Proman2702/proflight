@@ -13,18 +13,16 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   final FirebaseFirestore _firestore;
   final AuthRepository _authRepository;
 
-  CollectionReference<Map<String, dynamic>> get _profiles =>
-      _firestore.collection('profiles');
-  CollectionReference<Map<String, dynamic>> get _flightData =>
-      _firestore.collection('flightData');
-
   @override
   Future<Result<List<PilotProfile>>> listProfiles() {
     return RepositoryGuard.firebaseDatabase(() async {
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      final snapshot = await _profiles.where('ownerUid', isEqualTo: uid).get();
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      final snapshot = await userDoc.collection('profiles').get();
       return Ok(
         snapshot.docs
             .map((doc) => PilotProfile.fromJson(doc.data()))
@@ -36,18 +34,16 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<PilotProfile>> getProfile(String profileName) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final doc = await _profiles.doc(profileName).get();
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      final doc = await userDoc.collection('profiles').doc(profileName).get();
       final data = doc.data();
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      if (data == null || data['ownerUid'] != uid) {
-        return Err(
-          DatabaseFailure(
-            DatabaseFailureType.notFound,
-            message: 'Profile not found',
-          ),
-        );
+      if (data == null) {
+        return Err(DatabaseFailure(DatabaseFailureType.notFound));
       }
       return Ok(PilotProfile.fromJson(data));
     });
@@ -56,13 +52,16 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<PilotProfile>> createProfile(PilotProfile profile) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      await _profiles.doc(profile.profileName).set({
-        ...profile.toJson(),
-        'ownerUid': uid,
-      });
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      await userDoc
+          .collection('profiles')
+          .doc(profile.profileName)
+          .set(profile.toJson());
       return Ok(profile);
     });
   }
@@ -70,13 +69,16 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<PilotProfile>> replaceProfile(PilotProfile profile) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      await _profiles.doc(profile.profileName).set({
-        ...profile.toJson(),
-        'ownerUid': uid,
-      });
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      await userDoc
+          .collection('profiles')
+          .doc(profile.profileName)
+          .set(profile.toJson());
       return Ok(profile);
     });
   }
@@ -84,7 +86,13 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<Unit>> deleteProfile(String profileName) {
     return RepositoryGuard.firebaseDatabase(() async {
-      await _profiles.doc(profileName).delete();
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      await userDoc.collection('profiles').doc(profileName).delete();
       return const Ok(Unit());
     });
   }
@@ -92,11 +100,14 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<List<FlightData>>> listFlightDataByProfile(String profileName) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      final snapshot = await _flightData
-          .where('ownerUid', isEqualTo: uid)
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      final snapshot = await userDoc
+          .collection('flight-data')
           .where('profileName', isEqualTo: profileName)
           .get();
       return Ok(
@@ -110,18 +121,19 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<FlightData>> getFlightData(int id) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final doc = await _flightData.doc(id.toString()).get();
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      final doc = await userDoc
+          .collection('flight-data')
+          .doc(id.toString())
+          .get();
       final data = doc.data();
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      if (data == null || data['ownerUid'] != uid) {
-        return Err(
-          DatabaseFailure(
-            DatabaseFailureType.notFound,
-            message: 'Flight data not found',
-          ),
-        );
+      if (data == null) {
+        return Err(DatabaseFailure(DatabaseFailureType.notFound));
       }
       return Ok(FlightData.fromJson(data));
     });
@@ -133,17 +145,19 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
     required FlightData flightData,
   }) {
     return RepositoryGuard.firebaseDatabase(() async {
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
       final id = flightData.id ?? DateTime.now().microsecondsSinceEpoch;
       final data = {
         ...flightData.toJson(),
         'id': id,
         'profileName': profileName,
-        'ownerUid': uid,
       };
-      await _flightData.doc(id.toString()).set(data);
+      await userDoc.collection('flight-data').doc(id.toString()).set(data);
       return Ok(FlightData.fromJson(data));
     });
   }
@@ -153,20 +167,23 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
     return RepositoryGuard.firebaseDatabase(() async {
       final id = flightData.id;
       if (id == null) {
-        return Err(
-          DatabaseFailure(
-            DatabaseFailureType.invalidArgument,
-            message: 'flightData.id is required for replace',
-          ),
-        );
+        return Err(DatabaseFailure(DatabaseFailureType.invalidArgument));
       }
-      final uidResult = _requireUserId();
-      if (uidResult is Err<String>) return Err(uidResult.error);
-      final uid = (uidResult as Ok<String>).value;
-      await _flightData.doc(id.toString()).set({
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      final current = await userDoc
+          .collection('flight-data')
+          .doc(id.toString())
+          .get();
+      final currentProfileName = current.data()?['profileName'];
+      await userDoc.collection('flight-data').doc(id.toString()).set({
         ...flightData.toJson(),
-        'ownerUid': uid,
-      }, SetOptions(merge: true));
+        if (currentProfileName != null) 'profileName': currentProfileName,
+      });
       return Ok(flightData);
     });
   }
@@ -174,21 +191,22 @@ class FirebaseAppDatabaseRepository implements AppDatabaseRepository {
   @override
   Future<Result<Unit>> deleteFlightData(int id) {
     return RepositoryGuard.firebaseDatabase(() async {
-      await _flightData.doc(id.toString()).delete();
+      final userDocResult = _requireUserDoc();
+      if (userDocResult is Err<DocumentReference<Map<String, dynamic>>>) {
+        return Err(userDocResult.error);
+      }
+      final userDoc =
+          (userDocResult as Ok<DocumentReference<Map<String, dynamic>>>).value;
+      await userDoc.collection('flight-data').doc(id.toString()).delete();
       return const Ok(Unit());
     });
   }
 
-  Result<String> _requireUserId() {
+  Result<DocumentReference<Map<String, dynamic>>> _requireUserDoc() {
     final id = _authRepository.currentUser?.id;
     if (id == null) {
-      return Err(
-        DatabaseFailure(
-          DatabaseFailureType.unauthenticated,
-          message: 'No current user',
-        ),
-      );
+      return Err(DatabaseFailure(DatabaseFailureType.unauthenticated));
     }
-    return Ok(id);
+    return Ok(_firestore.collection('users').doc(id));
   }
 }

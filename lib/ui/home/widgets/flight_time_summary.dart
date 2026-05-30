@@ -10,44 +10,69 @@ class FlightTimeSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalMinutes = stats.total.inMinutes;
+    final dayShare = totalMinutes == 0
+        ? 0.0
+        : stats.day.inMinutes / totalMinutes;
+
     return Column(
       children: [
         const Text(
           'Общее время',
-          style: TextStyle(color: CustomColors.mainText),
+          style: TextStyle(color: Color(0xFFC7D4F4), fontSize: 13),
         ),
+        const SizedBox(height: 2),
         Text(
           stats.totalLabel,
           style: const TextStyle(
             color: CustomColors.main,
             fontSize: 38,
+            height: 1,
             fontWeight: FontWeight.w900,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 28),
         Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: CustomColors.surface,
+            color: const Color(0xFF111319),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             children: [
-              TimeBadge(
-                icon: Icons.schedule,
-                label: stats.totalLabel,
-                color: CustomColors.main,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TimeBadge(
+                    icon: Icons.wb_sunny,
+                    label: stats.dayLabel,
+                    color: CustomColors.sun,
+                  ),
+                  TimeBadge(
+                    icon: Icons.nightlight_round,
+                    label: stats.nightLabel,
+                    color: CustomColors.night,
+                  ),
+                ],
               ),
-              TimeBadge(
-                icon: Icons.wb_sunny,
-                label: stats.dayLabel,
-                color: CustomColors.sun,
-              ),
-              TimeBadge(
-                icon: Icons.nightlight_round,
-                label: stats.nightLabel,
-                color: CustomColors.night,
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: SizedBox(
+                  height: 5,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: (dayShare * 1000).round().clamp(1, 999),
+                        child: Container(color: CustomColors.sun),
+                      ),
+                      Expanded(
+                        flex: ((1 - dayShare) * 1000).round().clamp(1, 999),
+                        child: Container(color: CustomColors.night),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

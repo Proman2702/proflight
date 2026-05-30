@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:proflight/di/di_container.dart';
+import 'package:proflight/etc/colors.dart';
 import 'package:proflight/navigation/routes.dart';
 import 'package:proflight/repositories/auth/auth_repository.dart';
 import 'package:proflight/repositories/database/app_database_repository.dart';
@@ -47,13 +48,45 @@ class App extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF4C9AC4),
-              secondary: Color(0xFFC38091),
-              surface: Color(0xFF181818),
-              error: Color(0xFFE53B3B),
+              primary: CustomColors.accent1,
+              secondary: CustomColors.accent2,
+              surface: CustomColors.surface,
+              error: CustomColors.danger,
             ),
-            scaffoldBackgroundColor: const Color(0xFF121212),
+            scaffoldBackgroundColor: CustomColors.mainDark,
             textTheme: GoogleFonts.juraTextTheme(Theme.of(context).textTheme),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: CustomColors.surfaceHigh,
+              labelStyle: const TextStyle(color: CustomColors.mainText),
+              hintStyle: const TextStyle(color: CustomColors.mainText),
+              prefixIconColor: CustomColors.accent1,
+              suffixIconColor: CustomColors.mainText,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(
+                  color: CustomColors.accent1,
+                  width: 1.4,
+                ),
+              ),
+            ),
+            textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: CustomColors.accent1,
+              selectionColor: Color(0x554F9EAC),
+              selectionHandleColor: CustomColors.accent1,
+            ),
           ),
         ),
       ),
